@@ -29,19 +29,25 @@ export const s3Client = getS3Client()
 export const S3_BUCKET = process.env.S3_BUCKET || 'ecommerce-images'
 
 /**
- * ファイルをS3にアップロード
+ * ファイルをS3にアップロード（File オブジェクトから）
  */
 export async function uploadToS3(
-  file: Buffer,
-  key: string,
-  contentType: string
-): Promise<string> {
+  file: File,
+  prefix: string = 'products'
+): Promise<{ success: boolean; url?: string; error?: string }> {
   try {
+    // ファイルをBufferに変換
+    const arrayBuffer = await file.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+    
+    // ファイル名を生成
+    const key = generateImageKey(file.name, prefix)
+    
     const command = new PutObjectCommand({
       Bucket: S3_BUCKET,
       Key: key,
-      Body: file,
-      ContentType: contentType,
+      Body: buffer,
+      ContentType: file.type,
     })
 
     await s3Client.send(command)
@@ -52,10 +58,10 @@ export async function uploadToS3(
       : `https://${S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`
 
     console.log(`✅ File uploaded to S3: ${key}`)
-    return url
+    return { success: true, url }
   } catch (error) {
     console.error('❌ S3 upload error:', error)
-    throw new Error('ファイルのアップロードに失敗しました')
+    return { success: false, error: 'ファイルのアップロードに失敗しました' }
   }
 }
 
@@ -81,10 +87,18 @@ export async function getSignedS3Url(
 }
 
 /**
- * S3からファイルを削除
+ * S3からファイルを削除（URLから）
  */
-export async function deleteFromS3(key: string): Promise<void> {
+export async function deleteFromS3(url: string): Promise<void> {
   try {
+    // URLからキーを抽出
+    const key = url.split(`/${S3_BUCKET}/`)[1]
+    
+    if (!key) {
+      console.warn('⚠️ Invalid S3 URL, skipping deletion:', url)
+      return
+    }
+    
     const command = new DeleteObjectCommand({
       Bucket: S3_BUCKET,
       Key: key,
@@ -94,7 +108,7 @@ export async function deleteFromS3(key: string): Promise<void> {
     console.log(`✅ File deleted from S3: ${key}`)
   } catch (error) {
     console.error('❌ S3 delete error:', error)
-    throw new Error('ファイルの削除に失敗しました')
+    // 削除失敗は致命的ではないのでエラーをスローしない
   }
 }
 
