@@ -28,6 +28,12 @@ services:
         condition: service_healthy
     networks:
       - ecommerce-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service=app"
 
   # PostgreSQL データベース
   db:
@@ -48,6 +54,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service=db"
 
   # Redis キャッシュ
   redis:
@@ -64,6 +76,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service=redis"
 
   # LocalStack - AWS サービスエミュレーター
   localstack:
@@ -119,11 +137,58 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - ./monitoring/grafana:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
       - grafana_data:/var/lib/grafana
     networks:
       - ecommerce-network
     depends_on:
       - prometheus
+    restart: unless-stopped
+
+  # Node Exporter - システムメトリクス
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: ecommerce-node-exporter
+    ports:
+      - "9100:9100"
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  # PostgreSQL Exporter - DBメトリクス
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: ecommerce-postgres-exporter
+    ports:
+      - "9187:9187"
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:password@db:5432/ecommerce?sslmode=disable"
+    networks:
+      - ecommerce-network
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  # Redis Exporter - キャッシュメトリクス
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: ecommerce-redis-exporter
+    ports:
+      - "9121:9121"
+    environment:
+      REDIS_ADDR: "redis://redis:6379"
+    networks:
+      - ecommerce-network
+    depends_on:
+      - redis
     restart: unless-stopped
 
 volumes:

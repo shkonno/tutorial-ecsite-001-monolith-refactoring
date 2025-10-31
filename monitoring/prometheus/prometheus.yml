@@ -2,6 +2,10 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
 
+# アラートルールの読み込み
+rule_files:
+  - 'alert.rules.yml'
+
 scrape_configs:
   # Prometheus自身の監視
   - job_name: 'prometheus'
