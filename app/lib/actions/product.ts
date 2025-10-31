@@ -8,7 +8,15 @@ import { invalidateCache } from '@/lib/redis'
 /**
  * 商品を作成（管理者のみ）
  */
-export async function createProduct(formData: FormData) {
+export async function createProduct(formData: {
+  name: string
+  description?: string
+  price: number
+  stock: number
+  imageUrl?: string
+  category?: string
+  isActive: boolean
+}) {
   try {
     const session = await auth()
 
@@ -19,57 +27,38 @@ export async function createProduct(formData: FormData) {
       }
     }
 
-    // フォームデータを取得
-    const name = formData.get('name') as string
-    const description = formData.get('description') as string
-    const price = parseFloat(formData.get('price') as string)
-    const stock = parseInt(formData.get('stock') as string, 10)
-    const category = formData.get('category') as string
-    const imageFile = formData.get('image') as File | null
-    const isActive = formData.get('isActive') === 'true'
-
     // バリデーション
-    if (!name || !description || !price || !stock || !category) {
+    if (!formData.name || formData.name.trim().length === 0) {
       return {
         success: false,
-        error: 'すべての必須項目を入力してください',
+        error: '商品名を入力してください',
       }
     }
 
-    if (price <= 0) {
+    if (formData.price <= 0) {
       return {
         success: false,
-        error: '価格は0より大きい値を入力してください',
+        error: '価格は1円以上で入力してください',
       }
     }
 
-    if (stock < 0) {
+    if (formData.stock < 0) {
       return {
         success: false,
-        error: '在庫数は0以上の値を入力してください',
-      }
-    }
-
-    // 画像をアップロード
-    let imageUrl: string | null = null
-    if (imageFile && imageFile.size > 0) {
-        return {
-          success: false,
-          error: '画像のアップロードに失敗しました',
-        }
+        error: '在庫数は0以上で入力してください',
       }
     }
 
     // 商品を作成
     const product = await prisma.product.create({
       data: {
-        name,
-        description,
-        price,
-        stock,
-        category,
-        imageUrl,
-        isActive,
+        name: formData.name.trim(),
+        description: formData.description?.trim(),
+        price: formData.price,
+        stock: formData.stock,
+        imageUrl: formData.imageUrl,
+        category: formData.category?.trim(),
+        isActive: formData.isActive,
       },
     })
 
@@ -81,8 +70,8 @@ export async function createProduct(formData: FormData) {
 
     return {
       success: true,
+      product,
       message: '商品を作成しました',
-      productId: product.id,
     }
   } catch (error: any) {
     console.error('商品作成エラー:', error)
@@ -96,7 +85,18 @@ export async function createProduct(formData: FormData) {
 /**
  * 商品を更新（管理者のみ）
  */
-export async function updateProduct(productId: string, formData: FormData) {
+export async function updateProduct(
+  productId: string,
+  formData: {
+    name: string
+    description?: string
+    price: number
+    stock: number
+    imageUrl?: string
+    category?: string
+    isActive: boolean
+  }
+) {
   try {
     const session = await auth()
 
@@ -119,63 +119,45 @@ export async function updateProduct(productId: string, formData: FormData) {
       }
     }
 
-    // フォームデータを取得
-    const name = formData.get('name') as string
-    const description = formData.get('description') as string
-    const price = parseFloat(formData.get('price') as string)
-    const stock = parseInt(formData.get('stock') as string, 10)
-    const category = formData.get('category') as string
-    const imageFile = formData.get('image') as File | null
-    const isActive = formData.get('isActive') === 'true'
-
     // バリデーション
-    if (!name || !description || !price || !stock || !category) {
+    if (!formData.name || formData.name.trim().length === 0) {
       return {
         success: false,
-        error: 'すべての必須項目を入力してください',
+        error: '商品名を入力してください',
       }
     }
 
-    if (price <= 0) {
+    if (formData.price <= 0) {
       return {
         success: false,
-        error: '価格は0より大きい値を入力してください',
+        error: '価格は1円以上で入力してください',
       }
     }
 
-    if (stock < 0) {
+    if (formData.stock < 0) {
       return {
         success: false,
-        error: '在庫数は0以上の値を入力してください',
-      }
-    }
-
-    // 画像をアップロード（新しい画像がある場合）
-    let imageUrl = existingProduct.imageUrl
-    if (imageFile && imageFile.size > 0) {
-        return {
-          success: false,
-          error: '画像のアップロードに失敗しました',
-        }
+        error: '在庫数は0以上で入力してください',
       }
     }
 
     // 商品を更新
-    await prisma.product.update({
+    const product = await prisma.product.update({
       where: { id: productId },
       data: {
-        name,
-        description,
-        price,
-        stock,
-        category,
-        imageUrl,
-        isActive,
+        name: formData.name.trim(),
+        description: formData.description?.trim(),
+        price: formData.price,
+        stock: formData.stock,
+        imageUrl: formData.imageUrl,
+        category: formData.category?.trim(),
+        isActive: formData.isActive,
       },
     })
 
     // キャッシュを無効化
     await invalidateCache('products:*')
+    await invalidateCache(`product:${productId}`)
 
     revalidatePath('/admin/products')
     revalidatePath('/products')
@@ -183,6 +165,7 @@ export async function updateProduct(productId: string, formData: FormData) {
 
     return {
       success: true,
+      product,
       message: '商品を更新しました',
     }
   } catch (error: any) {
@@ -209,28 +192,48 @@ export async function deleteProduct(productId: string) {
     }
 
     // 商品が存在するか確認
-    const product = await prisma.product.findUnique({
+    const existingProduct = await prisma.product.findUnique({
       where: { id: productId },
+      include: {
+        orderItems: true,
+      },
     })
 
-    if (!product) {
+    if (!existingProduct) {
       return {
         success: false,
         error: '商品が見つかりません',
       }
     }
 
-    // 画像を削除
-    if (product.imageUrl) {
+    // 注文済み商品の場合は論理削除（isActiveをfalseに）
+    if (existingProduct.orderItems.length > 0) {
+      await prisma.product.update({
+        where: { id: productId },
+        data: { isActive: false },
+      })
+
+      // キャッシュを無効化
+      await invalidateCache('products:*')
+      await invalidateCache(`product:${productId}`)
+
+      revalidatePath('/admin/products')
+      revalidatePath('/products')
+
+      return {
+        success: true,
+        message: '商品を非公開にしました（注文履歴に含まれるため削除できません）',
+      }
     }
 
-    // 商品を削除
+    // 注文がない場合は物理削除
     await prisma.product.delete({
       where: { id: productId },
     })
 
     // キャッシュを無効化
     await invalidateCache('products:*')
+    await invalidateCache(`product:${productId}`)
 
     revalidatePath('/admin/products')
     revalidatePath('/products')
@@ -249,60 +252,15 @@ export async function deleteProduct(productId: string) {
 }
 
 /**
- * 商品の有効/無効を切り替え（管理者のみ）
+ * 商品検索（管理者用）
  */
-export async function toggleProductStatus(productId: string) {
-  try {
-    const session = await auth()
-
-    if (!session?.user?.id || session.user.role !== 'ADMIN') {
-      return {
-        success: false,
-        error: '管理者権限が必要です',
-      }
-    }
-
-    // 商品が存在するか確認
-    const product = await prisma.product.findUnique({
-      where: { id: productId },
-    })
-
-    if (!product) {
-      return {
-        success: false,
-        error: '商品が見つかりません',
-      }
-    }
-
-    // ステータスを切り替え
-    await prisma.product.update({
-      where: { id: productId },
-      data: { isActive: !product.isActive },
-    })
-
-    // キャッシュを無効化
-    await invalidateCache('products:*')
-
-    revalidatePath('/admin/products')
-    revalidatePath('/products')
-
-    return {
-      success: true,
-      message: `商品を${product.isActive ? '無効' : '有効'}にしました`,
-    }
-  } catch (error: any) {
-    console.error('商品ステータス切り替えエラー:', error)
-    return {
-      success: false,
-      error: '商品ステータスの切り替えに失敗しました',
-    }
-  }
-}
-
-/**
- * 全商品を取得（管理者用）
- */
-export async function getAllProductsForAdmin(page: number = 1, limit: number = 20) {
+export async function searchProductsForAdmin(
+  query: string,
+  category?: string,
+  isActive?: boolean,
+  page: number = 1,
+  limit: number = 20
+) {
   try {
     const session = await auth()
 
@@ -315,18 +273,55 @@ export async function getAllProductsForAdmin(page: number = 1, limit: number = 2
 
     const skip = (page - 1) * limit
 
-    const [products, totalCount] = await Promise.all([
+    const where: any = {}
+
+    if (query && query.trim().length > 0) {
+      where.OR = [
+        { name: { contains: query, mode: 'insensitive' } },
+        { description: { contains: query, mode: 'insensitive' } },
+      ]
+    }
+
+    if (category && category !== 'all') {
+      where.category = category
+    }
+
+    if (isActive !== undefined) {
+      where.isActive = isActive
+    }
+
+    const [products, totalCount, categories] = await Promise.all([
       prisma.product.findMany({
+        where,
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
+        include: {
+          _count: {
+            select: {
+              orderItems: true,
+            },
+          },
+        },
       }),
-      prisma.product.count(),
+      prisma.product.count({ where }),
+      // 全カテゴリを取得
+      prisma.product.groupBy({
+        by: ['category'],
+        where: {
+          category: { not: null },
+        },
+        _count: true,
+      }),
     ])
 
     return {
       success: true,
       products,
+      categories: categories.map((c) => ({
+        name: c.category,
+        count: c._count,
+      })),
       pagination: {
         page,
         limit,
@@ -335,10 +330,56 @@ export async function getAllProductsForAdmin(page: number = 1, limit: number = 2
       },
     }
   } catch (error: any) {
-    console.error('商品一覧取得エラー:', error)
+    console.error('商品検索エラー:', error)
     return {
       success: false,
-      error: '商品一覧の取得に失敗しました',
+      error: '商品の検索に失敗しました',
+    }
+  }
+}
+
+/**
+ * 商品詳細を取得（管理者用）
+ */
+export async function getProductByIdForAdmin(productId: string) {
+  try {
+    const session = await auth()
+
+    if (!session?.user?.id || session.user.role !== 'ADMIN') {
+      return {
+        success: false,
+        error: '管理者権限が必要です',
+      }
+    }
+
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      include: {
+        _count: {
+          select: {
+            orderItems: true,
+            cartItems: true,
+          },
+        },
+      },
+    })
+
+    if (!product) {
+      return {
+        success: false,
+        error: '商品が見つかりません',
+      }
+    }
+
+    return {
+      success: true,
+      product,
+    }
+  } catch (error: any) {
+    console.error('商品詳細取得エラー:', error)
+    return {
+      success: false,
+      error: '商品詳細の取得に失敗しました',
     }
   }
 }

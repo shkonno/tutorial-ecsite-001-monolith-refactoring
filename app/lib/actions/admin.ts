@@ -292,3 +292,89 @@ export async function updateUserRole(userId: string, role: string) {
     }
   }
 }
+
+/**
+ * ダッシュボード用統計情報を取得（管理者のみ）
+ */
+export async function getDashboardStats() {
+  try {
+    const session = await auth()
+
+    if (!session?.user?.id || session.user.role !== 'ADMIN') {
+      return {
+        success: false,
+        error: '管理者権限が必要です',
+      }
+    }
+
+    // 各種統計を並列取得
+    const [
+      totalRevenue,
+      totalOrders,
+      totalProducts,
+      totalUsers,
+      recentOrders,
+      lowStockProducts,
+    ] = await Promise.all([
+      // 総売上
+      prisma.order.aggregate({
+        where: {
+          status: { notIn: ['CANCELLED'] },
+        },
+        _sum: { totalAmount: true },
+      }),
+      // 注文数
+      prisma.order.count(),
+      // 商品数
+      prisma.product.count({
+        where: { isActive: true },
+      }),
+      // ユーザー数
+      prisma.user.count(),
+      // 最新注文（5件）
+      prisma.order.findMany({
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: {
+            select: { name: true, email: true },
+          },
+          orderItems: {
+            include: {
+              product: {
+                select: { name: true },
+              },
+            },
+          },
+        },
+      }),
+      // 在庫少ない商品（10個以下）
+      prisma.product.findMany({
+        where: {
+          isActive: true,
+          stock: { lte: 10 },
+        },
+        orderBy: { stock: 'asc' },
+        take: 10,
+      }),
+    ])
+
+    return {
+      success: true,
+      stats: {
+        totalRevenue: totalRevenue._sum.totalAmount || 0,
+        totalOrders,
+        totalProducts,
+        totalUsers,
+        recentOrders,
+        lowStockProducts,
+      },
+    }
+  } catch (error: any) {
+    console.error('ダッシュボード統計取得エラー:', error)
+    return {
+      success: false,
+      error: 'ダッシュボード統計の取得に失敗しました',
+    }
+  }
+}

@@ -4,30 +4,31 @@ import { uploadToS3 } from '@/lib/s3'
 
 export async function POST(request: NextRequest) {
   try {
-    // 管理者権限チェック
+    // 認証チェック
     const session = await auth()
-    if (!session || session.user?.role !== 'ADMIN') {
+
+    if (!session?.user?.id || session.user.role !== 'ADMIN') {
       return NextResponse.json(
-        { error: '管理者権限が必要です' },
+        { success: false, error: '管理者権限が必要です' },
         { status: 403 }
       )
     }
 
-    // FormDataからファイルを取得
+    // FormDataを取得
     const formData = await request.formData()
-    const file = formData.get('file') as File | null
+    const file = formData.get('file') as File
 
     if (!file) {
       return NextResponse.json(
-        { error: 'ファイルが指定されていません' },
+        { success: false, error: 'ファイルが選択されていません' },
         { status: 400 }
       )
     }
 
-    // ファイルサイズチェック（5MB）
+    // ファイルサイズチェック（5MB以下）
     if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json(
-        { error: 'ファイルサイズは5MB以下にしてください' },
+        { success: false, error: 'ファイルサイズは5MB以下にしてください' },
         { status: 400 }
       )
     }
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
     // ファイルタイプチェック
     if (!file.type.startsWith('image/')) {
       return NextResponse.json(
-        { error: '画像ファイルを選択してください' },
+        { success: false, error: '画像ファイルのみアップロードできます' },
         { status: 400 }
       )
     }
@@ -43,20 +44,23 @@ export async function POST(request: NextRequest) {
     // S3にアップロード
     const result = await uploadToS3(file, 'products')
 
-    if (!result.success || !result.url) {
+    if (!result.success) {
       return NextResponse.json(
-        { error: result.error || 'アップロードに失敗しました' },
+        { success: false, error: result.error || 'アップロードに失敗しました' },
         { status: 500 }
       )
     }
 
-    return NextResponse.json({ url: result.url })
-  } catch (error) {
-    console.error('Upload API error:', error)
+    return NextResponse.json({
+      success: true,
+      url: result.url,
+      message: 'アップロードが完了しました',
+    })
+  } catch (error: any) {
+    console.error('画像アップロードエラー:', error)
     return NextResponse.json(
-      { error: 'サーバーエラーが発生しました' },
+      { success: false, error: '画像のアップロードに失敗しました' },
       { status: 500 }
     )
   }
 }
-

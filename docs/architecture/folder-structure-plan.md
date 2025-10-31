@@ -181,7 +181,7 @@ docs/
 
 ### 🚧 次のステップ
 
-このフォルダ構成を基に、[issues-and-todos.md](../issues-and-todos.md) のイシューリストに従って順次実装を進めます。
+このフォルダ構成を基に、[issues-and-todos.md](../product/issues-and-todos.md) のイシューリストに従って順次実装を進めます。
 
 **推奨開発順序:**
 
@@ -189,7 +189,7 @@ docs/
 2. **イシュー #2: データベース設計とPrisma設定** ← 次はここから
 3. **イシュー #3: 認証システムの実装**
 4. **イシュー #4: 商品管理機能の実装**
-5. 以降、[issues-and-todos.md](../issues-and-todos.md) を参照
+5. 以降、[issues-and-todos.md](../product/issues-and-todos.md) を参照
 
 ## 開発フェーズごとの実装計画
 
@@ -265,4 +265,3 @@ app/
 
 **Last Updated**: 2025-10-29  
 **Status**: ✅ 基盤構築完了
-

@@ -295,7 +295,7 @@ Phase 5が完了したら、Phase 6で以下の機能を追加できます：
 4. カート機能
 5. 注文処理
 
-詳細は `docs/issues-and-todos.md` を参照してください。
+詳細は [`issues-and-todos.md`](../../product/issues-and-todos.md) を参照してください。
 
 ---
 
@@ -307,4 +307,3 @@ Phase 5が完了したら、Phase 6で以下の機能を追加できます：
 - ECSタスクの状態
 - セキュリティグループの設定
 - IAMロールの権限
-

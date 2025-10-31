@@ -1,140 +1,203 @@
-import { getAllProductsForAdmin } from '@/lib/actions/product'
+import { searchProductsForAdmin } from '@/lib/actions/product'
 import Link from 'next/link'
-import Image from 'next/image'
-import { ProductActions } from '@/components/admin/ProductActions'
+import ProductSearch from '@/components/admin/ProductSearch'
 
 export default async function AdminProductsPage({
   searchParams,
 }: {
-  searchParams: { page?: string }
+  searchParams: { q?: string; category?: string; active?: string; page?: string }
 }) {
-  const page = parseInt(searchParams.page || '1', 10)
-  const result = await getAllProductsForAdmin(page, 20)
+  const query = searchParams.q || ''
+  const category = searchParams.category || 'all'
+  const isActiveParam = searchParams.active
+  const isActive = isActiveParam === 'true' ? true : isActiveParam === 'false' ? false : undefined
+  const page = parseInt(searchParams.page || '1')
+
+  const result = await searchProductsForAdmin(
+    query,
+    category === 'all' ? undefined : category,
+    isActive,
+    page,
+    20
+  )
 
   if (!result.success || !result.products) {
     return (
-      <div>
-        <h1 className="text-3xl font-bold mb-8">商品管理</h1>
-        <p className="text-red-600">{result.error || '商品の取得に失敗しました'}</p>
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">商品管理</h1>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800">
+          {result.error || 'データの取得に失敗しました'}
+        </div>
       </div>
     )
   }
 
-  const { products, pagination } = result
+  const { products, categories, pagination } = result
+
+  // 金額をフォーマット
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('ja-JP', {
+      style: 'currency',
+      currency: 'JPY',
+    }).format(price)
+  }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">商品管理</h1>
+    <div className="max-w-7xl mx-auto">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">商品管理</h1>
         <Link
           href="/admin/products/new"
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
         >
-          ➕ 新規商品登録
+          + 新規商品
         </Link>
       </div>
 
-      {/* 商品一覧テーブル */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="text-left py-3 px-4">画像</th>
-              <th className="text-left py-3 px-4">商品名</th>
-              <th className="text-left py-3 px-4">カテゴリ</th>
-              <th className="text-left py-3 px-4">価格</th>
-              <th className="text-left py-3 px-4">在庫</th>
-              <th className="text-left py-3 px-4">ステータス</th>
-              <th className="text-left py-3 px-4">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.length === 0 ? (
+      {/* 検索フォーム */}
+      <ProductSearch categories={categories || []} />
+
+      {/* 商品一覧 */}
+      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
               <tr>
-                <td colSpan={7} className="text-center py-8 text-gray-500">
-                  商品がありません
-                </td>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  商品
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  カテゴリ
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  価格
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  在庫
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  状態
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  操作
+                </th>
               </tr>
-            ) : (
-              products.map((product) => (
-                <tr key={product.id} className="border-t hover:bg-gray-50">
-                  <td className="py-3 px-4">
-                    {product.imageUrl ? (
-                      <Image
-                        src={product.imageUrl}
-                        alt={product.name}
-                        width={60}
-                        height={60}
-                        className="rounded object-cover"
-                      />
-                    ) : (
-                      <div className="w-[60px] h-[60px] bg-gray-200 rounded flex items-center justify-center">
-                        <span className="text-gray-400 text-xs">No Image</span>
-                      </div>
-                    )}
-                  </td>
-                  <td className="py-3 px-4">
-                    <Link
-                      href={`/products/${product.id}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      {product.name}
-                    </Link>
-                  </td>
-                  <td className="py-3 px-4">{product.category}</td>
-                  <td className="py-3 px-4">¥{product.price.toLocaleString()}</td>
-                  <td className="py-3 px-4">
-                    <span
-                      className={`${
-                        product.stock === 0
-                          ? 'text-red-600 font-semibold'
-                          : product.stock < 10
-                          ? 'text-orange-600'
-                          : 'text-gray-900'
-                      }`}
-                    >
-                      {product.stock}個
-                    </span>
-                  </td>
-                  <td className="py-3 px-4">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        product.isActive
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
-                    >
-                      {product.isActive ? '有効' : '無効'}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4">
-                    <ProductActions productId={product.id} isActive={product.isActive} />
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {products.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                    商品が見つかりませんでした
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* ページネーション */}
-      {pagination && pagination.totalPages > 1 && (
-        <div className="mt-8 flex justify-center gap-2">
-          {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((pageNum) => (
-            <Link
-              key={pageNum}
-              href={`/admin/products?page=${pageNum}`}
-              className={`px-4 py-2 rounded ${
-                pageNum === pagination.page
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              {pageNum}
-            </Link>
-          ))}
+              ) : (
+                products.map((product) => (
+                  <tr key={product.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        {product.imageUrl && (
+                          <img
+                            src={product.imageUrl}
+                            alt={product.name}
+                            className="w-12 h-12 rounded-lg object-cover mr-4"
+                          />
+                        )}
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {product.name}
+                          </div>
+                          {product.description && (
+                            <div className="text-sm text-gray-500 truncate max-w-xs">
+                              {product.description.substring(0, 50)}
+                              {product.description.length > 50 && '...'}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm text-gray-900">
+                        {product.category || '-'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="text-sm font-medium text-gray-900">
+                        {formatPrice(product.price)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`text-sm font-medium ${
+                          product.stock === 0
+                            ? 'text-red-600'
+                            : product.stock <= 10
+                            ? 'text-orange-600'
+                            : 'text-green-600'
+                        }`}
+                      >
+                        {product.stock}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                          product.isActive
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
+                        {product.isActive ? '公開中' : '非公開'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <Link
+                        href={`/admin/products/${product.id}/edit`}
+                        className="text-blue-600 hover:text-blue-900 mr-4"
+                      >
+                        編集
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
-      )}
+
+        {/* ページネーション */}
+        {pagination && pagination.totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+            <div className="text-sm text-gray-700">
+              {pagination.totalCount}件中 {(pagination.page - 1) * pagination.limit + 1}-
+              {Math.min(pagination.page * pagination.limit, pagination.totalCount)}件を表示
+            </div>
+            <div className="flex gap-2">
+              {pagination.page > 1 && (
+                <Link
+                  href={`/admin/products?${new URLSearchParams({
+                    ...searchParams,
+                    page: (pagination.page - 1).toString(),
+                  }).toString()}`}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  前へ
+                </Link>
+              )}
+              {pagination.page < pagination.totalPages && (
+                <Link
+                  href={`/admin/products?${new URLSearchParams({
+                    ...searchParams,
+                    page: (pagination.page + 1).toString(),
+                  }).toString()}`}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  次へ
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

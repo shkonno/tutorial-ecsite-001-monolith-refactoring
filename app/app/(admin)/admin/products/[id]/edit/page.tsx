@@ -1,24 +1,22 @@
-import { prisma } from '@/lib/db'
-import { ProductForm } from '@/components/admin/ProductForm'
+import { getProductByIdForAdmin } from '@/lib/actions/product'
 import { notFound } from 'next/navigation'
+import ProductForm from '@/components/admin/ProductForm'
 
 export default async function EditProductPage({
   params,
 }: {
   params: { id: string }
 }) {
-  const product = await prisma.product.findUnique({
-    where: { id: params.id },
-  })
+  const result = await getProductByIdForAdmin(params.id)
 
-  if (!product) {
+  if (!result.success || !result.product) {
     notFound()
   }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-8">商品編集</h1>
-      <ProductForm product={product} />
+    <div className="max-w-7xl mx-auto">
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">商品編集</h1>
+      <ProductForm product={result.product} />
     </div>
   )
 }
