@@ -1,0 +1,157 @@
+<mxfile host="app.diagrams.net" agent="5.0" version="24.7.17">
+  <diagram name="Pattern 3 - Microservices Architecture" id="pattern3">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <mxCell id="internet" value="Internet" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="675" y="40" width="250" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="route53" value="Route 53" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.route_53;" vertex="1" parent="1">
+          <mxGeometry x="760" y="180" width="80" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="cloudfront" value="CloudFront" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudfront;" vertex="1" parent="1">
+          <mxGeometry x="600" y="300" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="apigw" value="API Gateway" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#FF4F8B;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="920" y="300" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="eks-cluster" value="Amazon EKS Cluster" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=1;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_eks_cluster;strokeColor=#B6BABF;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#B6BABF;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="80" y="420" width="1440" height="720" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="service-mesh" value="App Mesh / Istio (Service Mesh)" style="fillColor=none;strokeColor=#945DF2;dashed=1;verticalAlign=top;fontStyle=2;fontColor=#945DF2;fontSize=11;" vertex="1" parent="eks-cluster">
+          <mxGeometry x="40" y="40" width="1360" height="640" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ingress" value="Ingress Controller&#xa;(ALB / Nginx)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;" vertex="1" parent="service-mesh">
+          <mxGeometry x="560" y="40" width="240" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="user-service-box" value="User Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;fontStyle=1;verticalAlign=top;align=center;" vertex="1" parent="service-mesh">
+          <mxGeometry x="80" y="160" width="200" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="user-pods" value="Pods × 3&#xa;&#xa;Node.js&#xa;NestJS" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eks_pod;" vertex="1" parent="service-mesh">
+          <mxGeometry x="140" y="200" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="user-db" value="RDS&#xa;(Users)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rds;" vertex="1" parent="service-mesh">
+          <mxGeometry x="150" y="310" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="product-service-box" value="Product Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;verticalAlign=top;align=center;" vertex="1" parent="service-mesh">
+          <mxGeometry x="320" y="160" width="200" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="product-pods" value="Pods × 5&#xa;&#xa;Node.js&#xa;NestJS" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eks_pod;" vertex="1" parent="service-mesh">
+          <mxGeometry x="380" y="200" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="product-db" value="RDS&#xa;(Products)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rds;" vertex="1" parent="service-mesh">
+          <mxGeometry x="390" y="310" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="cart-service-box" value="Cart Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=top;align=center;" vertex="1" parent="service-mesh">
+          <mxGeometry x="560" y="160" width="200" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="cart-pods" value="Pods × 3&#xa;&#xa;Go&#xa;Gin" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eks_pod;" vertex="1" parent="service-mesh">
+          <mxGeometry x="620" y="200" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="cart-redis" value="Redis&#xa;(Cache)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elasticache;" vertex="1" parent="service-mesh">
+          <mxGeometry x="630" y="310" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="order-service-box" value="Order Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;verticalAlign=top;align=center;" vertex="1" parent="service-mesh">
+          <mxGeometry x="800" y="160" width="200" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="order-pods" value="Pods × 4&#xa;&#xa;Python&#xa;FastAPI" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eks_pod;" vertex="1" parent="service-mesh">
+          <mxGeometry x="860" y="200" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="order-db" value="RDS&#xa;(Orders)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rds;" vertex="1" parent="service-mesh">
+          <mxGeometry x="870" y="310" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="notification-service-box" value="Notification Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;verticalAlign=top;align=center;" vertex="1" parent="service-mesh">
+          <mxGeometry x="1040" y="160" width="200" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="notification-pods" value="Pods × 2&#xa;&#xa;Node.js" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eks_pod;" vertex="1" parent="service-mesh">
+          <mxGeometry x="1100" y="200" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="notification-sqs" value="SQS/SNS" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#FF4F8B;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sqs;" vertex="1" parent="service-mesh">
+          <mxGeometry x="1110" y="310" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="shared-infra" value="Shared Infrastructure" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=12;fontStyle=1;verticalAlign=top;align=center;" vertex="1" parent="service-mesh">
+          <mxGeometry x="200" y="440" width="960" height="160" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="eventbridge" value="EventBridge" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#FF4F8B;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eventbridge;" vertex="1" parent="service-mesh">
+          <mxGeometry x="260" y="490" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="s3" value="S3" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#60A337;gradientDirection=north;fillColor=#277116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="service-mesh">
+          <mxGeometry x="380" y="490" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="elasticache-shared" value="ElastiCache" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elasticache;" vertex="1" parent="service-mesh">
+          <mxGeometry x="500" y="490" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="dynamodb" value="DynamoDB" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="service-mesh">
+          <mxGeometry x="620" y="490" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="secrets" value="Secrets&#xa;Manager" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F34482;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=9;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.secrets_manager;" vertex="1" parent="service-mesh">
+          <mxGeometry x="740" y="490" width="60" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="observability" value="Observability Stack&#xa;CloudWatch | X-Ray | Prometheus | Grafana | Jaeger" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#333333;fontSize=11;fontStyle=1;" vertex="1" parent="eks-cluster">
+          <mxGeometry x="1000" y="560" width="360" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="internet" target="route53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="route53" target="cloudfront">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="route53" target="apigw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="apigw" target="ingress">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#999999;dashed=1;" edge="1" parent="1" source="user-pods" target="product-pods">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#999999;dashed=1;" edge="1" parent="1" source="product-pods" target="cart-pods">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#999999;dashed=1;" edge="1" parent="1" source="cart-pods" target="order-pods">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#999999;dashed=1;" edge="1" parent="1" source="order-pods" target="notification-pods">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="label1" value="Pattern 3: Microservices Architecture (Amazon EKS)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="550" y="10" width="500" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="label2" value="High Scalability, Independent Services, Service Mesh, Complex but Powerful" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="500" y="1160" width="600" height="30" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

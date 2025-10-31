@@ -1,0 +1,100 @@
+<mxfile host="65bd71144e">
+    <diagram name="Repository Structure Overview" id="repo-overview">
+        <mxGraphModel dx="1714" dy="1092" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="ECサイト - マルチリポジトリ構成" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#1A1A1A;" parent="1" vertex="1">
+                    <mxGeometry x="350" y="40" width="700" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="github-org" value="GitHub Organization: yourorg/ecommerce-aws-patterns" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;verticalAlign=top;align=center;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="120" width="1200" height="800" as="geometry"/>
+                </mxCell>
+                <mxCell id="shared-repo" value="ecommerce-shared" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="180" width="400" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="shared-content" value="📦 Shared Resources&#10;- Database Schemas&#10;- API Contracts (OpenAPI)&#10;- Type Definitions&#10;- Event Schemas&#10;✅ Spec Kit: 必須" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#000000;labelBorderColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="210" width="380" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="planning-repo" value="ecommerce-planning" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="340" width="250" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="planning-content" value="📋 Documentation&#10;- Architecture Plans&#10;- Comparisons&#10;- Tutorials&#10;❌ Spec Kit: 不要" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#000000;labelBorderColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="150" y="365" width="230" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="pattern1-repo" value="ecommerce-monolith" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="480" width="250" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="pattern1-content" value="🔷 Pattern 1: Monolith&#10;- Next.js Full Stack&#10;- ECS Fargate&#10;- Single Repository&#10;✅ Spec Kit: 1つ (ルート)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#000000;labelBorderColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="150" y="505" width="230" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="pattern2-repo" value="ecommerce-three-tier" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="480" width="250" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="pattern2-content" value="🔷 Pattern 2: Three-Tier&#10;- React + NestJS&#10;- Frontend/Backend Split&#10;- S3 + ECS&#10;✅ Spec Kit: 3つ&#10;   (ルート, frontend, backend)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#000000;labelBorderColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="505" width="230" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="pattern3-repo" value="ecommerce-microservices" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="740" y="480" width="250" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="pattern3-content" value="🔷 Pattern 3: Microservices&#10;- 5 Services (EKS)&#10;- Service Mesh&#10;- Multi-DB&#10;✅ Spec Kit: 6つ&#10;   (ルート + 各サービス)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#000000;labelBorderColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="750" y="505" width="230" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="pattern4-repo" value="ecommerce-event-driven" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="1040" y="480" width="250" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="pattern4-content" value="🔷 Pattern 4: Event-Driven&#10;- ECS + Lambda Hybrid&#10;- EventBridge&#10;- Step Functions&#10;✅ Spec Kit: 4つ&#10;   (ルート, containers, lambdas)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#000000;labelBorderColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="1050" y="505" width="230" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="terraform-repo" value="ecommerce-terraform" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;dashed=1;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="340" width="250" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="terraform-content" value="🔧 共通インフラ (Optional)&#10;- Terraform Modules&#10;- Multi-Environment&#10;⚠️ Spec Kit: オプション" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#000000;labelBorderColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="365" width="230" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="dep1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d79b00;dashed=1;endArrow=classic;endFill=1;labelBorderColor=default;fontColor=#000000;" parent="1" source="shared-repo" target="pattern1-repo" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="dep2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d79b00;dashed=1;endArrow=classic;endFill=1;labelBorderColor=default;fontColor=#000000;" parent="1" source="shared-repo" target="pattern2-repo" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="dep3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d79b00;dashed=1;endArrow=classic;endFill=1;labelBorderColor=default;fontColor=#000000;" parent="1" source="shared-repo" target="pattern3-repo" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="dep4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#d79b00;dashed=1;endArrow=classic;endFill=1;labelBorderColor=default;fontColor=#000000;" parent="1" source="shared-repo" target="pattern4-repo" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="dep-label" value="依存 (npm package / Git Submodule)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#000000;fontStyle=2;labelBorderColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="920" y="370" width="250" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="cicd-box" value="CI/CD Strategy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=1;verticalAlign=top;align=center;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="640" width="1150" height="260" as="geometry"/>
+                </mxCell>
+                <mxCell id="cicd-pattern1" value="Pattern 1&#10;Deploy → ECS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="180" y="680" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="cicd-pattern2" value="Pattern 2&#10;Frontend → S3&#10;Backend → ECS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="680" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="cicd-pattern3" value="Pattern 3&#10;Services → EKS&#10;(ArgoCD GitOps)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="680" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="cicd-pattern4" value="Pattern 4&#10;Containers → ECS&#10;Lambdas → SAM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="680" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="cicd-tools" value="🔧 Tools&#10;- GitHub Actions (Build/Test)&#10;- ArgoCD (K8s GitOps)&#10;- AWS SAM (Lambda)&#10;- Terraform (Infrastructure)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="680" width="430" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="cicd-workflow" value="📋 Workflow&#10;1. Push to main branch&#10;2. GitHub Actions: Build + Test + Push to ECR/S3&#10;3. Deploy: Update ECS Service / ArgoCD Sync / SAM Deploy&#10;4. Monitor: CloudWatch + X-Ray" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#000000;labelBorderColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="180" y="780" width="1070" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="speckit-legend" value="📘 Spec Kit設定" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;labelBorderColor=default;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="950" y="180" width="320" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="speckit-content" value="各リポジトリで実行:&#10;&#10;/speckit.constitution  → 基本原則&#10;/speckit.specify       → 詳細仕様&#10;/speckit.plan          → 実装計画&#10;/speckit.tasks         → タスクリスト" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#000000;fontFamily=Courier New;labelBorderColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="210" width="300" height="80" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
