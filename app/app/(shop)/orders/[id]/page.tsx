@@ -33,24 +33,13 @@ export default function OrderDetailPage() {
   const params = useParams()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const orderId = params.id as string
   const isSuccess = searchParams.get('success') === 'true'
 
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
   const [cancelling, setCancelling] = useState(false)
-
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login')
-      return
-    }
-
-    if (status === 'authenticated') {
-      fetchOrder()
-    }
-  }, [status, router, orderId])
 
   const fetchOrder = async () => {
     try {
@@ -70,6 +59,17 @@ export default function OrderDetailPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login')
+      return
+    }
+
+    if (status === 'authenticated') {
+      fetchOrder()
+    }
+  }, [status, router, orderId, fetchOrder])
 
   const handleCancel = async () => {
     if (!confirm('この注文をキャンセルしますか？\n在庫は自動的に復元されます。')) return
@@ -260,7 +260,7 @@ export default function OrderDetailPage() {
 }
 
 function OrderStatusBadge({ status }: { status: string }) {
-  const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
+  const statusConfig: Record<string, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
     PENDING: { label: '処理中', color: 'bg-yellow-100 text-yellow-800', icon: FiPackage },
     CONFIRMED: { label: '確定', color: 'bg-blue-100 text-blue-800', icon: FiCheckCircle },
     SHIPPED: { label: '発送済み', color: 'bg-purple-100 text-purple-800', icon: FiTruck },

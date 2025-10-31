@@ -60,7 +60,7 @@ export async function POST(request: Request) {
       },
       { status: 201 }
     )
-  } catch (error: any) {
+  } catch (error) {
     console.error('ユーザー登録エラー:', error)
     return NextResponse.json(
       { error: 'ユーザー登録に失敗しました' },

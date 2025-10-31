@@ -99,7 +99,7 @@ export async function invalidateCachePattern(pattern: string): Promise<void> {
  */
 export async function setSession(
   sessionId: string,
-  data: any,
+  data: Record<string, unknown>,
   ttl: number = 86400 // デフォルト24時間
 ): Promise<void> {
   try {

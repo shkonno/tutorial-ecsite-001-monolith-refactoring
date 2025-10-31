@@ -8,7 +8,15 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 // S3クライアントの設定
 const getS3Client = () => {
-  const config: any = {
+  const config: {
+    region: string
+    credentials: {
+      accessKeyId: string
+      secretAccessKey: string
+    }
+    endpoint?: string
+    forcePathStyle?: boolean
+  } = {
     region: process.env.AWS_REGION || 'ap-northeast-1',
     credentials: {
       accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'test',

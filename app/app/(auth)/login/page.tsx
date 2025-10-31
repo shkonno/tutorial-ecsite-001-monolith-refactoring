@@ -35,7 +35,7 @@ export default function LoginPage() {
       // ログイン成功
       router.push('/')
       router.refresh()
-    } catch (error) {
+    } catch {
       setError('ログインに失敗しました')
       setIsLoading(false)
     }
