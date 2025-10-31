@@ -3,7 +3,6 @@
 import { prisma } from '@/lib/db'
 import { auth } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
-import { uploadToS3, deleteFromS3, S3_BUCKET } from '@/lib/s3'
 import { invalidateCache } from '@/lib/redis'
 
 /**
@@ -54,12 +53,6 @@ export async function createProduct(formData: FormData) {
     // 画像をアップロード
     let imageUrl: string | null = null
     if (imageFile && imageFile.size > 0) {
-      try {
-        const arrayBuffer = await imageFile.arrayBuffer()
-        const buffer = Buffer.from(arrayBuffer)
-        const key = `products/${Date.now()}-${imageFile.name}`
-        imageUrl = await uploadToS3(buffer, key, imageFile.type)
-      } catch (error) {
         return {
           success: false,
           error: '画像のアップロードに失敗しました',
@@ -160,21 +153,6 @@ export async function updateProduct(productId: string, formData: FormData) {
     // 画像をアップロード（新しい画像がある場合）
     let imageUrl = existingProduct.imageUrl
     if (imageFile && imageFile.size > 0) {
-      try {
-        // 古い画像を削除
-        if (existingProduct.imageUrl) {
-          const oldKey = existingProduct.imageUrl.split(`/${S3_BUCKET}/`)[1]
-          if (oldKey) {
-            await deleteFromS3(oldKey)
-          }
-        }
-
-        // 新しい画像をアップロード
-        const arrayBuffer = await imageFile.arrayBuffer()
-        const buffer = Buffer.from(arrayBuffer)
-        const key = `products/${Date.now()}-${imageFile.name}`
-        imageUrl = await uploadToS3(buffer, key, imageFile.type)
-      } catch (error) {
         return {
           success: false,
           error: '画像のアップロードに失敗しました',
@@ -244,15 +222,6 @@ export async function deleteProduct(productId: string) {
 
     // 画像を削除
     if (product.imageUrl) {
-      try {
-        const key = product.imageUrl.split(`/${S3_BUCKET}/`)[1]
-        if (key) {
-          await deleteFromS3(key)
-        }
-      } catch (error) {
-        console.error('画像削除エラー:', error)
-        // 画像削除失敗は致命的ではないので続行
-      }
     }
 
     // 商品を削除
