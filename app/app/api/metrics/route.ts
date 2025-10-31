@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { register } from '@/lib/metrics'
 
+export const runtime = 'nodejs' as const
+
 export async function GET() {
   try {
     // Prometheusフォーマットでメトリクスを返す
@@ -19,4 +21,3 @@ export async function GET() {
     )
   }
 }
-

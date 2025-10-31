@@ -1,3 +1,4 @@
+import 'server-only'
 import { Counter, Gauge, Histogram, Registry } from 'prom-client'
 
 // グローバルレジストリの作成
@@ -119,4 +120,3 @@ export const activeUsers = new Gauge({
   help: 'Number of currently active users',
   registers: [register],
 })
-

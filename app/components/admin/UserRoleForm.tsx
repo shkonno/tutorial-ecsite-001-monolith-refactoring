@@ -44,7 +44,8 @@ export default function UserRoleForm({
 
       setSuccess(result.message || 'ロールを変更しました')
       router.refresh()
-    } catch (err) {
+    } catch (error) {
+      console.error('ユーザーロール更新エラー:', error)
       setError('予期しないエラーが発生しました')
     } finally {
       setLoading(false)
@@ -52,44 +53,47 @@ export default function UserRoleForm({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+    <div className="space-y-4 rounded-2xl border border-[var(--md-sys-color-outline)] bg-[var(--md-sys-color-surface)] p-6 shadow-[0_10px_20px_rgba(15,23,42,0.12)]">
+      <h3 className="text-lg font-semibold text-[var(--md-sys-color-on-surface)]">
         ユーザーロール変更
       </h3>
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3 text-red-800 text-sm">
+        <div
+          className="rounded-xl border border-[var(--md-sys-color-error)] bg-[var(--md-sys-color-error)]/10 px-3 py-2 text-sm text-[var(--md-sys-color-error)]"
+          role="alert"
+        >
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-3 text-green-800 text-sm">
+        <div
+          className="rounded-xl border border-[var(--md-sys-color-success)] bg-[var(--md-sys-color-success)]/10 px-3 py-2 text-sm text-[var(--md-sys-color-success)]"
+          role="status"
+        >
           {success}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--md-sys-color-secondary)]">
             ユーザー
           </label>
-          <p className="text-sm text-gray-900">{userName || 'ユーザー名なし'}</p>
+          <p className="text-sm text-[var(--md-sys-color-on-surface)]">
+            {userName || 'ユーザー名なし'}
+          </p>
         </div>
 
         <div>
-          <label
-            htmlFor="role"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            ロール
-          </label>
+          <label htmlFor="role">ロール</label>
           <select
             id="role"
             value={role}
             onChange={(e) => setRole(e.target.value)}
             disabled={loading}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="w-full disabled:cursor-not-allowed disabled:bg-[var(--md-sys-color-surface-variant)] disabled:text-[var(--md-sys-color-secondary)]"
           >
             <option value="USER">一般ユーザー</option>
             <option value="ADMIN">管理者</option>
@@ -99,9 +103,9 @@ export default function UserRoleForm({
         <button
           type="submit"
           disabled={loading || role === currentRole}
-          className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
+          className="w-full rounded-full bg-[var(--md-sys-color-primary)] px-6 py-3 text-sm font-semibold text-[var(--md-sys-color-on-primary)] transition hover:bg-[#1669c1] focus-visible:bg-[#1669c1] disabled:cursor-not-allowed disabled:bg-[var(--md-sys-color-surface-variant)] disabled:text-[var(--md-sys-color-secondary)]"
         >
-          {loading ? '変更中...' : 'ロールを変更'}
+          {loading ? '変更中…' : 'ロールを変更'}
         </button>
       </form>
     </div>

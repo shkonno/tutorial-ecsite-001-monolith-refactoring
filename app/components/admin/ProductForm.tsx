@@ -18,12 +18,22 @@ interface ProductFormProps {
   }
 }
 
+type ProductFormState = {
+  name: string
+  description: string
+  price: number
+  stock: number
+  imageUrl: string
+  category: string
+  isActive: boolean
+}
+
 export default function ProductForm({ product }: ProductFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProductFormState>({
     name: product?.name || '',
     description: product?.description || '',
     price: product?.price || 0,
@@ -51,48 +61,42 @@ export default function ProductForm({ product }: ProductFormProps) {
 
       router.push('/admin/products')
       router.refresh()
-    } catch (err) {
+    } catch (error) {
+      console.error('商品フォーム送信エラー:', error)
       setError('予期しないエラーが発生しました')
       setLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl">
+    <form onSubmit={handleSubmit} className="max-w-3xl space-y-6">
       {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 text-red-800">
+        <div
+          className="rounded-2xl border border-[var(--md-sys-color-error)] bg-[var(--md-sys-color-error)]/10 px-4 py-3 text-[var(--md-sys-color-error)]"
+          role="alert"
+        >
           {error}
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
-        {/* 商品名 */}
+      <div className="space-y-6 rounded-2xl border border-[var(--md-sys-color-outline)] bg-[var(--md-sys-color-surface)] p-6 shadow-[0_12px_24px_rgba(15,23,42,0.12)]">
         <div>
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            商品名 <span className="text-red-500">*</span>
+          <label htmlFor="name">
+            商品名 <span className="text-[var(--md-sys-color-error)]">*</span>
           </label>
           <input
             type="text"
             id="name"
             required
+            aria-required="true"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="商品名を入力"
           />
         </div>
 
-        {/* 説明 */}
         <div>
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            説明
-          </label>
+          <label htmlFor="description">説明</label>
           <textarea
             id="description"
             rows={4}
@@ -100,64 +104,54 @@ export default function ProductForm({ product }: ProductFormProps) {
             onChange={(e) =>
               setFormData({ ...formData, description: e.target.value })
             }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="商品の説明を入力"
           />
         </div>
 
-        {/* 価格と在庫 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <label
-              htmlFor="price"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              価格（円） <span className="text-red-500">*</span>
+            <label htmlFor="price">
+              価格（円）{' '}
+              <span className="text-[var(--md-sys-color-error)]">*</span>
             </label>
             <input
               type="number"
               id="price"
               required
-              min="1"
+              aria-required="true"
+              min={1}
+              inputMode="numeric"
               value={formData.price}
               onChange={(e) =>
-                setFormData({ ...formData, price: parseInt(e.target.value) })
+                setFormData({ ...formData, price: Number(e.target.value) })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="1000"
             />
           </div>
 
           <div>
-            <label
-              htmlFor="stock"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              在庫数 <span className="text-red-500">*</span>
+            <label htmlFor="stock">
+              在庫数{' '}
+              <span className="text-[var(--md-sys-color-error)]">*</span>
             </label>
             <input
               type="number"
               id="stock"
               required
-              min="0"
+              aria-required="true"
+              min={0}
+              inputMode="numeric"
               value={formData.stock}
               onChange={(e) =>
-                setFormData({ ...formData, stock: parseInt(e.target.value) })
+                setFormData({ ...formData, stock: Number(e.target.value) })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="100"
             />
           </div>
         </div>
 
-        {/* カテゴリ */}
         <div>
-          <label
-            htmlFor="category"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            カテゴリ
-          </label>
+          <label htmlFor="category">カテゴリ</label>
           <input
             type="text"
             id="category"
@@ -165,19 +159,16 @@ export default function ProductForm({ product }: ProductFormProps) {
             onChange={(e) =>
               setFormData({ ...formData, category: e.target.value })
             }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="例: 電化製品、書籍、衣類"
           />
         </div>
 
-        {/* 画像アップロード */}
         <ImageUpload
           currentImageUrl={formData.imageUrl}
           onImageUploaded={(url) => setFormData({ ...formData, imageUrl: url })}
         />
 
-        {/* 公開/非公開 */}
-        <div className="flex items-center">
+        <div className="flex items-center gap-3">
           <input
             type="checkbox"
             id="isActive"
@@ -185,34 +176,29 @@ export default function ProductForm({ product }: ProductFormProps) {
             onChange={(e) =>
               setFormData({ ...formData, isActive: e.target.checked })
             }
-            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            className="h-4 w-4 rounded border-[var(--md-sys-color-outline)] text-[var(--md-sys-color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-sys-color-primary)]"
           />
-          <label htmlFor="isActive" className="ml-2 text-sm text-gray-700">
+          <label htmlFor="isActive" className="m-0 text-sm">
             公開する
           </label>
         </div>
+      </div>
 
-        {/* ボタン */}
-        <div className="flex gap-4 pt-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
-          >
-            {loading
-              ? '処理中...'
-              : product
-              ? '更新する'
-              : '作成する'}
-          </button>
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            キャンセル
-          </button>
-        </div>
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="submit"
+          disabled={loading}
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--md-sys-color-primary)] px-6 py-3 text-sm font-semibold text-[var(--md-sys-color-on-primary)] transition hover:bg-[#1669c1] focus-visible:bg-[#1669c1] disabled:cursor-not-allowed disabled:bg-[var(--md-sys-color-surface-variant)] disabled:text-[var(--md-sys-color-secondary)]"
+        >
+          {loading ? '処理中…' : product ? '更新する' : '作成する'}
+        </button>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="inline-flex items-center justify-center gap-2 rounded-full border border-[var(--md-sys-color-outline)] px-6 py-3 text-sm font-semibold text-[var(--md-sys-color-on-surface)] transition hover:border-[var(--md-sys-color-primary)] hover:text-[var(--md-sys-color-primary)] focus-visible:border-[var(--md-sys-color-primary)]"
+        >
+          キャンセル
+        </button>
       </div>
     </form>
   )

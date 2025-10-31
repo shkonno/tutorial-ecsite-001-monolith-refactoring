@@ -3,6 +3,21 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SessionProvider from "@/components/SessionProvider";
+import { Roboto, Noto_Sans_JP } from "next/font/google";
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-roboto",
+  display: "swap",
+});
+
+const notoSansJP = Noto_Sans_JP({
+  subsets: ["japanese"],
+  weight: ["400", "500", "700"],
+  variable: "--font-noto-sans-jp",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "ECサイト - モノリス + コンテナアーキテクチャ",
@@ -15,11 +30,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja">
+    <html lang="ja" className={`${roboto.variable} ${notoSansJP.variable}`}>
       <body className="antialiased flex min-h-screen flex-col bg-[var(--background)] text-[var(--foreground)]">
+        <a href="#main-content" className="skip-link">
+          メインコンテンツにスキップ
+        </a>
         <SessionProvider>
           <Header />
-          <main className="flex-grow pt-16 md:pt-20">{children}</main>
+          <main id="main-content" className="flex-grow pt-20">
+            {children}
+          </main>
           <Footer />
         </SessionProvider>
       </body>

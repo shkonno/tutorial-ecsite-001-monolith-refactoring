@@ -1,159 +1,88 @@
 import Link from 'next/link'
 
+const FOOTER_LINKS = [
+  {
+    title: 'ショッピング',
+    links: [
+      { label: 'すべての商品', href: '/products' },
+      { label: '新着アイテム', href: '/products?sort=new' },
+      { label: '人気ランキング', href: '/products?sort=popular' },
+      { label: 'ギフトガイド', href: '/products?tag=gift' },
+    ],
+  },
+  {
+    title: 'サポート',
+    links: [
+      { label: '注文状況', href: '/orders' },
+      { label: 'お問い合わせ', href: '/contact' },
+      { label: 'よくある質問', href: '/faq' },
+      { label: 'サポートポリシー', href: '/support' },
+    ],
+  },
+  {
+    title: 'ポリシー',
+    links: [
+      { label: '利用規約', href: '/terms' },
+      { label: 'プライバシー', href: '/privacy' },
+      { label: '特定商取引法', href: '/legal' },
+      { label: 'クッキー設定', href: '/cookies' },
+    ],
+  },
+]
+
 export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="mt-24 bg-[#1d1d1f] text-[#f5f5f7]">
-      <div className="border-b border-white/10">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 text-[12px] text-[#6e6e73]">
-          <span>詳しいサポートが必要ですか？</span>
+    <footer className="mt-20 bg-[var(--md-sys-color-surface-variant)] text-[var(--md-sys-color-on-surface)]">
+      <div className="border-b border-[var(--md-sys-color-outline)]/60">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-4 text-sm text-[var(--md-sys-color-on-surface-variant)] sm:flex-row sm:items-center sm:justify-between">
+          <span>困ったときは、ヘルプセンターをご覧ください。</span>
           <a
             href="#top"
-            className="rounded-full bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#f5f5f7] transition hover:bg-white/20"
+            className="inline-flex items-center gap-2 rounded-full border border-[var(--md-sys-color-outline)] bg-[var(--md-sys-color-surface)] px-4 py-2 text-sm font-semibold text-[var(--md-sys-color-primary)] transition hover:border-[var(--md-sys-color-primary)] hover:text-[var(--md-sys-color-primary)] focus-visible:border-[var(--md-sys-color-primary)]"
           >
-            Back to top
+            ページの先頭へ戻る
           </a>
         </div>
       </div>
 
       <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="grid gap-10 text-[12px] md:grid-cols-4">
+        <div className="grid gap-10 text-sm sm:grid-cols-2 md:grid-cols-4">
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-[#f5f5f7]">EC Studio</p>
-            <p className="text-[#6e6e73]">
-              モダンなモノリシックECサイトのショーケース。
-              <br />
-              コンテナアーキテクチャと連携し、拡張性と運用のしやすさを両立します。
+            <p className="text-base font-semibold text-[var(--md-sys-color-on-surface)]">
+              EC Studio
+            </p>
+            <p className="text-[var(--md-sys-color-on-surface-variant)]">
+              コンテナアーキテクチャで構築したモダンなモノリシックECサイトのリファレンス実装です。プロダクトを素早く検証し、チームで学習するためのプレイグラウンドとして活用できます。
             </p>
           </div>
 
-          <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6e6e73]">
-              ショッピング
-            </p>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/products"
-                  className="transition hover:text-[#f5f5f7]"
-                >
-                  すべての商品
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=mac"
-                  className="transition hover:text-[#f5f5f7]"
-                >
-                  Mac向けアクセサリ
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=smartphone"
-                  className="transition hover:text-[#f5f5f7]"
-                >
-                  スマートフォン
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=audio"
-                  className="transition hover:text-[#f5f5f7]"
-                >
-                  オーディオ
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6e6e73]">
-              サービス
-            </p>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/about"
-                  className="transition hover:text-[#f5f5f7]"
-                >
-                  プロジェクトについて
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/register"
-                  className="transition hover:text-[#f5f5f7]"
-                >
-                  アカウント作成
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/orders"
-                  className="transition hover:text-[#f5f5f7]"
-                >
-                  注文状況
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/faq"
-                  className="transition hover:text-[#f5f5f7]"
-                >
-                  よくある質問
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6e6e73]">
-              サポート
-            </p>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/contact"
-                  className="transition hover:text-[#f5f5f7]"
-                >
-                  お問い合わせ
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/terms"
-                  className="transition hover:text-[#f5f5f7]"
-                >
-                  利用規約
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/privacy"
-                  className="transition hover:text-[#f5f5f7]"
-                >
-                  プライバシーポリシー
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/support"
-                  className="transition hover:text-[#f5f5f7]"
-                >
-                  サポートセンター
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {FOOTER_LINKS.map((section) => (
+            <nav key={section.title} aria-label={section.title} className="space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--md-sys-color-secondary)]">
+                {section.title}
+              </p>
+              <ul className="space-y-2">
+                {section.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-[var(--md-sys-color-on-surface-variant)] transition hover:text-[var(--md-sys-color-primary)] focus-visible:text-[var(--md-sys-color-primary)]"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
         </div>
 
-        <div className="mt-10 space-y-2 border-t border-white/10 pt-6 text-[11px] text-[#6e6e73]">
+        <div className="mt-12 flex flex-col gap-2 border-t border-[var(--md-sys-color-outline)] pt-6 text-xs text-[var(--md-sys-color-secondary)] md:flex-row md:items-center md:justify-between">
           <p>© {currentYear} EC Studio. All rights reserved.</p>
           <p>
-            Built with Next.js 16, PostgreSQL, Redis, and Prisma. Designed in
-            Tokyo.
+            Built with Next.js · PostgreSQL · Redis · Prisma &mdash; Designed for accessibility and scalability.
           </p>
         </div>
       </div>

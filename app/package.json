@@ -8,7 +8,12 @@
     "start": "next start",
     "lint": "eslint",
     "db:seed": "tsx prisma/seed.ts",
-    "serve": "http-server . -p 8080"
+    "serve": "http-server . -p 8080",
+    "test:e2e": "playwright test",
+    "test:e2e-navigation": "playwright test tests/e2e-navigation/",
+    "test:e2e-navigation:headed": "playwright test tests/e2e-navigation/ --headed",
+    "test:e2e-navigation:debug": "playwright test tests/e2e-navigation/ --debug",
+    "test:report": "playwright show-report"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

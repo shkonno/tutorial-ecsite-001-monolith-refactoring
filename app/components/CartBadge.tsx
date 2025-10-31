@@ -36,19 +36,17 @@ export default function CartBadge() {
     }
   }, [status, pathname]) // pathnameが変わったら再取得
 
-  if (status === 'loading') {
-    return (
-      <span className="pointer-events-none absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[11px] font-semibold text-white">
-        0
-      </span>
-    )
-  }
-
-  const displayCount = status === 'authenticated' ? itemCount : 0
+  const displayCount =
+    status === 'authenticated' && itemCount > 0 ? itemCount : null
 
   return (
-    <span className="pointer-events-none absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)] text-[11px] font-semibold text-white">
-      {displayCount > 99 ? '99+' : displayCount}
+    <span
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      className="pointer-events-none absolute -top-2 -right-2 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[var(--md-sys-color-primary)] px-1 text-[11px] font-semibold text-[var(--md-sys-color-on-primary)] shadow-[0_2px_6px_rgba(25,118,210,0.32)]"
+    >
+      {displayCount ? (displayCount > 99 ? '99+' : displayCount) : '0'}
     </span>
   )
 }

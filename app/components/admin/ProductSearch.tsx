@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 interface ProductSearchProps {
@@ -41,44 +41,32 @@ export default function ProductSearch({ categories }: ProductSearchProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {/* 検索キーワード */}
+    <div className="mb-6 rounded-2xl border border-[var(--md-sys-color-outline)] bg-[var(--md-sys-color-surface)] p-6 shadow-[0_8px_18px_rgba(15,23,42,0.1)]">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <div>
-          <label
-            htmlFor="search-query"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            検索
-          </label>
+          <label htmlFor="search-query">検索</label>
           <input
             type="text"
             id="search-query"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyPress={(e) => {
+            onKeyDown={(e) => {
               if (e.key === 'Enter') {
+                e.preventDefault()
                 handleSearch()
               }
             }}
             placeholder="商品名、説明"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
 
-        {/* カテゴリ */}
         <div>
-          <label
-            htmlFor="category-select"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            カテゴリ
-          </label>
+          <label htmlFor="category-select">カテゴリ</label>
           <select
             id="category-select"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full"
           >
             <option value="all">すべて</option>
             {categories.map((cat) => (
@@ -89,19 +77,13 @@ export default function ProductSearch({ categories }: ProductSearchProps) {
           </select>
         </div>
 
-        {/* 公開状態 */}
         <div>
-          <label
-            htmlFor="active-select"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            公開状態
-          </label>
+          <label htmlFor="active-select">公開状態</label>
           <select
             id="active-select"
             value={isActive}
             onChange={(e) => setIsActive(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full"
           >
             <option value="all">すべて</option>
             <option value="true">公開中</option>
@@ -109,17 +91,18 @@ export default function ProductSearch({ categories }: ProductSearchProps) {
           </select>
         </div>
 
-        {/* ボタン */}
         <div className="flex items-end gap-2">
           <button
+            type="button"
             onClick={handleSearch}
-            className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex-1 rounded-full bg-[var(--md-sys-color-primary)] px-4 py-2 text-sm font-semibold text-[var(--md-sys-color-on-primary)] transition hover:bg-[#1669c1] focus-visible:bg-[#1669c1]"
           >
             検索
           </button>
           <button
+            type="button"
             onClick={handleReset}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="rounded-full border border-[var(--md-sys-color-outline)] px-4 py-2 text-sm font-semibold text-[var(--md-sys-color-on-surface)] transition hover:border-[var(--md-sys-color-primary)] hover:text-[var(--md-sys-color-primary)] focus-visible:border-[var(--md-sys-color-primary)]"
           >
             リセット
           </button>
@@ -128,4 +111,3 @@ export default function ProductSearch({ categories }: ProductSearchProps) {
     </div>
   )
 }
-

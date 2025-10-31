@@ -50,45 +50,49 @@ export default function OrderStatusForm({
 
       setSuccess(result.message || 'ステータスを更新しました')
       router.refresh()
-    } catch (err) {
+    } catch (error) {
+      console.error('注文ステータス更新エラー:', error)
       setError('予期しないエラーが発生しました')
     } finally {
       setLoading(false)
     }
   }
 
+  const activeStatus = statusOptions.find((option) => option.value === status)
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+    <div className="space-y-4 rounded-2xl border border-[var(--md-sys-color-outline)] bg-[var(--md-sys-color-surface)] p-6 shadow-[0_10px_22px_rgba(15,23,42,0.12)]">
+      <h3 className="text-lg font-semibold text-[var(--md-sys-color-on-surface)]">
         注文ステータス変更
       </h3>
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3 text-red-800 text-sm">
+        <div
+          className="rounded-xl border border-[var(--md-sys-color-error)] bg-[var(--md-sys-color-error)]/10 px-3 py-2 text-sm text-[var(--md-sys-color-error)]"
+          role="alert"
+        >
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-3 text-green-800 text-sm">
+        <div
+          className="rounded-xl border border-[var(--md-sys-color-success)] bg-[var(--md-sys-color-success)]/10 px-3 py-2 text-sm text-[var(--md-sys-color-success)]"
+          role="status"
+        >
           {success}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label
-            htmlFor="status"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            ステータス
-          </label>
+          <label htmlFor="status">ステータス</label>
           <select
             id="status"
             value={status}
             onChange={(e) => setStatus(e.target.value)}
             disabled={loading}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="w-full disabled:cursor-not-allowed disabled:bg-[var(--md-sys-color-surface-variant)] disabled:text-[var(--md-sys-color-secondary)]"
           >
             {statusOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -96,14 +100,19 @@ export default function OrderStatusForm({
               </option>
             ))}
           </select>
+          {activeStatus && (
+            <p className="mt-2 inline-flex items-center rounded-full bg-[var(--md-sys-color-primary-container)] px-3 py-1 text-xs font-semibold text-[var(--md-sys-color-primary)]">
+              現在: {activeStatus.label}
+            </p>
+          )}
         </div>
 
         <button
           type="submit"
           disabled={loading || status === currentStatus}
-          className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium"
+          className="w-full rounded-full bg-[var(--md-sys-color-primary)] px-6 py-3 text-sm font-semibold text-[var(--md-sys-color-on-primary)] transition hover:bg-[#1669c1] focus-visible:bg-[#1669c1] disabled:cursor-not-allowed disabled:bg-[var(--md-sys-color-surface-variant)] disabled:text-[var(--md-sys-color-secondary)]"
         >
-          {loading ? '更新中...' : 'ステータスを更新'}
+          {loading ? '更新中…' : 'ステータスを更新'}
         </button>
       </form>
     </div>

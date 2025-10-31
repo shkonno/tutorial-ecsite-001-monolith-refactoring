@@ -1,7 +1,7 @@
-import { auth } from '@/lib/auth'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { httpRequestCounter, httpRequestDuration, httpRequestsInProgress } from '@/lib/metrics'
+import { getToken } from 'next-auth/jwt'
+import { httpRequestCounter, httpRequestDuration, httpRequestsInProgress } from '@/lib/metrics-edge'
 
 export default async function middleware(req: NextRequest) {
   const startTime = Date.now()
@@ -17,15 +17,15 @@ export default async function middleware(req: NextRequest) {
   httpRequestsInProgress.inc({ method, route: path })
 
   try {
-    const session = await auth()
-
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+    
     // 認証が必要なパス
     const protectedPaths = ['/cart', '/checkout', '/orders', '/admin']
     
     // 認証が必要なパスかチェック
     const isProtectedPath = protectedPaths.some(p => path.startsWith(p))
     
-    if (isProtectedPath && !session) {
+    if (isProtectedPath && !token) {
       // 未認証の場合はログインページにリダイレクト
       const loginUrl = new URL('/login', req.url)
       loginUrl.searchParams.set('callbackUrl', path)
@@ -37,7 +37,7 @@ export default async function middleware(req: NextRequest) {
     }
 
     // 管理者ページへのアクセス制御
-    if (path.startsWith('/admin') && session?.user?.role !== 'ADMIN') {
+    if (path.startsWith('/admin') && token?.role !== 'ADMIN') {
       // メトリクスを記録
       recordMetrics(method, path, 302, startTime)
       
@@ -75,12 +75,16 @@ function recordMetrics(method: string, route: string, statusCode: number, startT
 }
 
 // ミドルウェアを適用するパスを指定
+// :path* は0個以上のパスセグメントにマッチするため、/admin も /admin/products もマッチする
 export const config = {
   matcher: [
     '/cart/:path*',
+    '/cart',
     '/checkout/:path*',
+    '/checkout',
     '/orders/:path*',
+    '/orders',
     '/admin/:path*',
+    '/admin',
   ],
 }
-
