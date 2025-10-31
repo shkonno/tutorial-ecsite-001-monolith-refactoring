@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import type { CartItem, Product } from '@prisma/client'
 
 export async function GET() {
   try {
@@ -26,19 +27,19 @@ export async function GET() {
 
     // 合計金額を計算
     const total = cartItems.reduce(
-      (sum: number, item: any) => sum + item.product.price * item.quantity,
+      (sum: number, item: CartItem & { product: Product }) => sum + item.product.price * item.quantity,
       0
     )
 
     // 合計商品数を計算
-    const itemCount = cartItems.reduce((sum: number, item: any) => sum + item.quantity, 0)
+    const itemCount = cartItems.reduce((sum: number, item: CartItem) => sum + item.quantity, 0)
 
     return NextResponse.json({
       items: cartItems,
       total,
       itemCount,
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error('カート取得エラー:', error)
     return NextResponse.json(
       { error: 'カートの取得に失敗しました' },

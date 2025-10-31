@@ -136,4 +136,3 @@ export default async function AdminOrderDetailPage({
     </div>
   )
 }
-

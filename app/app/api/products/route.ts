@@ -67,7 +67,16 @@ export async function GET(request: NextRequest) {
       cacheKey,
       async () => {
         // WHERE条件を構築
-        const where: any = {
+        type WhereClause = {
+          isActive: boolean
+          category?: string
+          OR?: Array<{
+            name?: { contains: string; mode: 'insensitive' }
+            description?: { contains: string; mode: 'insensitive' }
+          }>
+        }
+        
+        const where: WhereClause = {
           isActive: true,
         }
 
@@ -112,14 +121,15 @@ export async function GET(request: NextRequest) {
 
     console.log(`✅ 商品一覧取得成功: ${data.products.length}件`)
     return NextResponse.json(data)
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ 商品取得エラー:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     console.error('エラー詳細:', {
-      message: error.message,
-      stack: error.stack,
+      message: errorMessage,
+      stack: error instanceof Error ? error.stack : undefined,
     })
     return NextResponse.json(
-      { error: '商品の取得に失敗しました', details: error.message },
+      { error: '商品の取得に失敗しました', details: errorMessage },
       { status: 500 }
     )
   }

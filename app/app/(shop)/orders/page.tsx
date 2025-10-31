@@ -25,7 +25,7 @@ interface Order {
 
 export default function OrdersPage() {
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -153,7 +153,7 @@ export default function OrdersPage() {
 }
 
 function OrderStatusBadge({ status }: { status: string }) {
-  const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
+  const statusConfig: Record<string, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
     PENDING: { label: '処理中', color: 'bg-yellow-100 text-yellow-800', icon: FiPackage },
     CONFIRMED: { label: '確定', color: 'bg-blue-100 text-blue-800', icon: FiCheckCircle },
     SHIPPED: { label: '発送済み', color: 'bg-purple-100 text-purple-800', icon: FiTruck },

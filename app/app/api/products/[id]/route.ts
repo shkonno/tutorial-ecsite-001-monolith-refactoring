@@ -41,14 +41,15 @@ export async function GET(
     }
 
     return NextResponse.json(product)
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ 商品詳細取得エラー:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     console.error('エラー詳細:', {
-      message: error.message,
-      stack: error.stack,
+      message: errorMessage,
+      stack: error instanceof Error ? error.stack : undefined,
     })
     return NextResponse.json(
-      { error: '商品の取得に失敗しました', details: error.message },
+      { error: '商品の取得に失敗しました', details: errorMessage },
       { status: 500 }
     )
   }

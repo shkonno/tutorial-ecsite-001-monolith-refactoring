@@ -34,6 +34,6 @@ export async function disconnectDB() {
 export async function transaction<T>(
   callback: (prisma: PrismaClient) => Promise<T>
 ): Promise<T> {
-  return prisma.$transaction(callback as any) as any
+  return prisma.$transaction(callback)
 }
 

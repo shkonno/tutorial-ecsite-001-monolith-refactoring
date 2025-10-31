@@ -3,7 +3,6 @@
 import { prisma } from '@/lib/db'
 import { auth } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
-import { uploadToS3, deleteFromS3 } from '@/lib/s3'
 import { invalidateCache } from '@/lib/redis'
 
 /**
@@ -54,10 +53,6 @@ export async function createProduct(formData: FormData) {
     // 画像をアップロード
     let imageUrl: string | null = null
     if (imageFile && imageFile.size > 0) {
-      const uploadResult = await uploadToS3(imageFile, 'products')
-      if (uploadResult.success && uploadResult.url) {
-        imageUrl = uploadResult.url
-      } else {
         return {
           success: false,
           error: '画像のアップロードに失敗しました',
@@ -158,16 +153,6 @@ export async function updateProduct(productId: string, formData: FormData) {
     // 画像をアップロード（新しい画像がある場合）
     let imageUrl = existingProduct.imageUrl
     if (imageFile && imageFile.size > 0) {
-      // 古い画像を削除
-      if (existingProduct.imageUrl) {
-        await deleteFromS3(existingProduct.imageUrl)
-      }
-
-      // 新しい画像をアップロード
-      const uploadResult = await uploadToS3(imageFile, 'products')
-      if (uploadResult.success && uploadResult.url) {
-        imageUrl = uploadResult.url
-      } else {
         return {
           success: false,
           error: '画像のアップロードに失敗しました',
@@ -237,7 +222,6 @@ export async function deleteProduct(productId: string) {
 
     // 画像を削除
     if (product.imageUrl) {
-      await deleteFromS3(product.imageUrl)
     }
 
     // 商品を削除

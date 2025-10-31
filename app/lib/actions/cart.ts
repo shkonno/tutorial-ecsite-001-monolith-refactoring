@@ -80,7 +80,7 @@ export async function addToCart(productId: string, quantity: number = 1) {
       success: true,
       message: 'カートに追加しました',
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('カート追加エラー:', error)
     return {
       success: false,
@@ -151,7 +151,7 @@ export async function updateCartItem(cartItemId: string, quantity: number) {
       success: true,
       message: '数量を更新しました',
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('カート更新エラー:', error)
     return {
       success: false,
@@ -205,7 +205,7 @@ export async function removeFromCart(cartItemId: string) {
       success: true,
       message: 'カートから削除しました',
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('カート削除エラー:', error)
     return {
       success: false,
@@ -238,7 +238,7 @@ export async function clearCart() {
       success: true,
       message: 'カートをクリアしました',
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('カートクリアエラー:', error)
     return {
       success: false,

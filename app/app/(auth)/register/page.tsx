@@ -59,8 +59,8 @@ export default function RegisterPage() {
       setTimeout(() => {
         router.push('/login')
       }, 2000)
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'ユーザー登録に失敗しました')
       setIsLoading(false)
     }
   }

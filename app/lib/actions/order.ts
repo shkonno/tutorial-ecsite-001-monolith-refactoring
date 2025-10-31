@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/db'
 import { auth } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
+import type { PrismaClient } from '@prisma/client'
 
 interface CheckoutData {
   shippingName: string
@@ -46,7 +47,7 @@ export async function createOrder(checkoutData: CheckoutData) {
     }
 
     // トランザクションで注文を作成
-    const order = await prisma.$transaction(async (tx: any) => {
+    const order = await prisma.$transaction(async (tx: PrismaClient) => {
       // 在庫チェックと在庫減算
       for (const item of cartItems) {
         const product = await tx.product.findUnique({
@@ -73,7 +74,7 @@ export async function createOrder(checkoutData: CheckoutData) {
 
       // 合計金額を計算
       const totalAmount = cartItems.reduce(
-        (sum: number, item: any) => sum + item.product.price * item.quantity,
+        (sum, item) => sum + item.product.price * item.quantity,
         0
       )
 
@@ -87,7 +88,7 @@ export async function createOrder(checkoutData: CheckoutData) {
           shippingAddress: checkoutData.shippingAddress,
           status: 'PENDING',
           orderItems: {
-            create: cartItems.map((item: any) => ({
+            create: cartItems.map((item) => ({
               productId: item.productId,
               quantity: item.quantity,
               price: item.product.price,
@@ -119,11 +120,11 @@ export async function createOrder(checkoutData: CheckoutData) {
       message: '注文が完了しました',
       orderId: order.id,
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('注文作成エラー:', error)
     return {
       success: false,
-      error: error.message || '注文の作成に失敗しました',
+      error: error instanceof Error ? error.message : '注文の作成に失敗しました',
     }
   }
 }
@@ -243,7 +244,7 @@ export async function cancelOrder(orderId: string) {
     }
 
     // トランザクションで在庫を戻してキャンセル
-    await prisma.$transaction(async (tx: any) => {
+    await prisma.$transaction(async (tx: PrismaClient) => {
       // 在庫を戻す
       for (const item of order.orderItems) {
         await tx.product.update({
@@ -266,7 +267,7 @@ export async function cancelOrder(orderId: string) {
       success: true,
       message: '注文をキャンセルしました',
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('注文キャンセルエラー:', error)
     return {
       success: false,
