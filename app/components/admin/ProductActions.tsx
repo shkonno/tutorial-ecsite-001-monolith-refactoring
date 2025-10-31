@@ -1,74 +1,93 @@
 'use client'
 
-import { toggleProductStatus, deleteProduct } from '@/lib/actions/product'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { deleteProduct } from '@/lib/actions/product'
 
-export function ProductActions({
-  productId,
-  isActive,
-}: {
+interface ProductActionsProps {
   productId: string
-  isActive: boolean
-}) {
+  productName: string
+}
+
+export default function ProductActions({
+  productId,
+  productName,
+}: ProductActionsProps) {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
-
-  const handleToggleStatus = async () => {
-    if (isLoading) return
-
-    setIsLoading(true)
-    const result = await toggleProductStatus(productId)
-    setIsLoading(false)
-
-    if (result.success) {
-      router.refresh()
-    } else {
-      alert(result.error || 'ステータスの切り替えに失敗しました')
-    }
-  }
+  const [loading, setLoading] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const handleDelete = async () => {
-    if (isLoading) return
+    setLoading(true)
 
-    if (!confirm('本当にこの商品を削除しますか？この操作は取り消せません。')) {
-      return
-    }
+    try {
+      const result = await deleteProduct(productId)
 
-    setIsLoading(true)
-    const result = await deleteProduct(productId)
-    setIsLoading(false)
+      if (!result.success) {
+        alert(result.error || '削除に失敗しました')
+        setLoading(false)
+        return
+      }
 
-    if (result.success) {
+      alert(result.message)
+      router.push('/admin/products')
       router.refresh()
-    } else {
-      alert(result.error || '商品の削除に失敗しました')
+    } catch (err) {
+      alert('予期しないエラーが発生しました')
+      setLoading(false)
     }
   }
 
   return (
     <div className="flex gap-2">
-      <Link
-        href={`/admin/products/${productId}/edit`}
-        className="text-blue-600 hover:underline text-sm"
+      <button
+        onClick={() => router.push(`/admin/products/${productId}/edit`)}
+        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
       >
         編集
-      </Link>
-      <button
-        onClick={handleToggleStatus}
-        disabled={isLoading}
-        className="text-orange-600 hover:underline text-sm disabled:opacity-50"
-      >
-        {isActive ? '無効化' : '有効化'}
       </button>
       <button
-        onClick={handleDelete}
-        disabled={isLoading}
-        className="text-red-600 hover:underline text-sm disabled:opacity-50"
+        onClick={() => setShowConfirm(true)}
+        disabled={loading}
+        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm"
       >
         削除
       </button>
+
+      {/* 削除確認ダイアログ */}
+      {showConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              商品を削除しますか?
+            </h3>
+            <p className="text-gray-600 mb-6">
+              <span className="font-medium">{productName}</span>{' '}
+              を削除してもよろしいですか？
+              <br />
+              <span className="text-sm text-gray-500">
+                ※注文履歴に含まれる商品は非公開になります
+              </span>
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleDelete}
+                disabled={loading}
+                className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading ? '削除中...' : '削除する'}
+              </button>
+              <button
+                onClick={() => setShowConfirm(false)}
+                disabled={loading}
+                className="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              >
+                キャンセル
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

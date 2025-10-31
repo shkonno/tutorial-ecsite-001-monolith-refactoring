@@ -45,7 +45,7 @@ aws configure
 ### 2. AWSインフラの作成（約10-15分）
 
 ```bash
-cd /Users/s-konno/Documents/archtecture/tutorial_ec_site_001_monolith/terraform
+cd terraform
 
 # Terraform初期化
 terraform init
@@ -96,7 +96,7 @@ terraform output
 ### 4. 初回Dockerイメージのビルド＆ECRプッシュ
 
 ```bash
-cd /Users/s-konno/Documents/archtecture/tutorial_ec_site_001_monolith
+cd ..  # プロジェクトルートへ戻る
 
 # ECRにログイン
 aws ecr get-login-password --region ap-northeast-1 | \
@@ -184,7 +184,7 @@ curl $ALB_URL
 テスト後、リソースを削除する場合：
 
 ```bash
-cd /Users/s-konno/Documents/archtecture/tutorial_ec_site_001_monolith/terraform
+cd terraform
 
 # すべてのAWSリソースを削除
 terraform destroy
@@ -203,9 +203,10 @@ aws ecr delete-repository \
 
 ## 📚 参考ドキュメント
 
-- [詳細デプロイガイド](./DEPLOYMENT.md)
+- [コンテナデプロイガイド](../operations/deployment/CONTAINER-DEPLOYMENT.md)
+- [AWSレガシー手順](../operations/deployment/legacy-aws/DEPLOYMENT.md)
 - [クイックスタート](./QUICKSTART.md)
-- [イシュー管理](./issues-and-todos.md)
+- [イシュー管理](../product/issues-and-todos.md)
 
 ---
 
@@ -229,4 +230,3 @@ aws elbv2 describe-target-health \
 - GitLab CI/CD > Jobs でエラーログ確認
 - GitLab CI/CD変数が正しく設定されているか確認
 - ECRリポジトリとECSサービスが存在するか確認
-

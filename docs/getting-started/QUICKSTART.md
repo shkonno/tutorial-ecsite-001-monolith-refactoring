@@ -42,7 +42,7 @@ docker images | grep ecommerce-app
 
 ## 🌩️ AWSへのデプロイ
 
-詳細な手順は [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) を参照してください。
+詳細な手順は [コンテナ環境デプロイガイド](../operations/deployment/CONTAINER-DEPLOYMENT.md) を参照してください。AWS Fargate 向けの旧手順は [legacy-aws/DEPLOYMENT.md](../operations/deployment/legacy-aws/DEPLOYMENT.md) に移動しました。
 
 ### クイックデプロイ手順
 
@@ -153,7 +153,7 @@ Hello Worldのデプロイが完了したら、以下の機能を追加できま
    - 注文作成
    - トランザクション処理
 
-詳細は [docs/issues-and-todos.md](./docs/issues-and-todos.md) を参照してください。
+詳細は [issues-and-todos.md](../product/issues-and-todos.md) を参照してください。
 
 ---
 
@@ -163,7 +163,7 @@ Hello Worldのデプロイが完了したら、以下の機能を追加できま
 - **$0/月** - すべてローカルで実行
 
 ### AWS本番環境
-- **月額 約$174** (詳細は [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) 参照)
+- **月額 約$174** (詳細は [legacy-aws/DEPLOYMENT.md](../operations/deployment/legacy-aws/DEPLOYMENT.md) 参照)
 
 コスト削減オプション:
 - 開発環境用の変数ファイルを使用: 月額 $67程度
@@ -202,16 +202,17 @@ docker-compose restart localstack
 
 ### AWS環境
 
-詳細は [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) のトラブルシューティングセクションを参照。
+詳細は [legacy-aws/DEPLOYMENT.md](../operations/deployment/legacy-aws/DEPLOYMENT.md) のトラブルシューティングセクションを参照。
 
 ---
 
 ## 📚 ドキュメント
 
-- **[詳細仕様書](./docs/pattern-1-monolith.md)** - アーキテクチャの詳細
-- **[デプロイガイド](./docs/DEPLOYMENT.md)** - AWS デプロイ手順
-- **[イシュー & Todo](./docs/issues-and-todos.md)** - 開発タスク一覧
-- **[フォルダ構成](./docs/folder-structure-plan.md)** - ディレクトリ構造
+- **[詳細仕様書](../architecture/pattern-1-monolith.md)** - アーキテクチャの詳細
+- **[デプロイガイド](../operations/deployment/CONTAINER-DEPLOYMENT.md)** - 最新のデプロイ手順
+- **[AWSレガシー手順](../operations/deployment/legacy-aws/DEPLOYMENT.md)** - 過去のFargate手順
+- **[イシュー & Todo](../product/issues-and-todos.md)** - 開発タスク一覧
+- **[フォルダ構成](../architecture/folder-structure-plan.md)** - ディレクトリ構造
 
 ---
 
@@ -227,4 +228,3 @@ docker-compose restart localstack
 ## 🤝 コントリビューション
 
 プルリクエストは歓迎します！大きな変更の場合は、まずissueを開いて変更内容を議論してください。
-

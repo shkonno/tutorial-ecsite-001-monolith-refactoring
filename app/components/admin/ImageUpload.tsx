@@ -1,23 +1,27 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 
-type ImageUploadProps = {
-  currentImageUrl?: string | null
-  onImageChange: (url: string) => void
+interface ImageUploadProps {
+  currentImageUrl?: string
+  onImageUploaded: (url: string) => void
 }
 
-export function ImageUpload({ currentImageUrl, onImageChange }: ImageUploadProps) {
+export default function ImageUpload({
+  currentImageUrl,
+  onImageUploaded,
+}: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null)
   const [error, setError] = useState<string | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    currentImageUrl || null
+  )
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // ファイルサイズチェック（5MB制限）
+    // ファイルサイズチェック（5MB以下）
     if (file.size > 5 * 1024 * 1024) {
       setError('ファイルサイズは5MB以下にしてください')
       return
@@ -33,28 +37,37 @@ export function ImageUpload({ currentImageUrl, onImageChange }: ImageUploadProps
     setUploading(true)
 
     try {
-      // FormDataを作成
+      // プレビュー表示
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+
+      // FormDataを作成してアップロード
       const formData = new FormData()
       formData.append('file', file)
 
-      // アップロードAPIを呼び出し
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       })
 
       if (!response.ok) {
-        throw new Error('アップロードに失敗しました')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'アップロードに失敗しました')
       }
 
       const data = await response.json()
 
-      // プレビューとフォームの値を更新
-      setPreviewUrl(data.url)
-      onImageChange(data.url)
-    } catch (err) {
-      setError('画像のアップロードに失敗しました')
-      console.error('Upload error:', err)
+      if (data.success && data.url) {
+        onImageUploaded(data.url)
+      } else {
+        throw new Error('アップロードに失敗しました')
+      }
+    } catch (err: any) {
+      console.error('画像アップロードエラー:', err)
+      setError(err.message || '画像のアップロードに失敗しました')
     } finally {
       setUploading(false)
     }
@@ -62,7 +75,7 @@ export function ImageUpload({ currentImageUrl, onImageChange }: ImageUploadProps
 
   const handleRemove = () => {
     setPreviewUrl(null)
-    onImageChange('')
+    onImageUploaded('')
   }
 
   return (
@@ -72,82 +85,101 @@ export function ImageUpload({ currentImageUrl, onImageChange }: ImageUploadProps
       </label>
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3 text-red-800 text-sm">
           {error}
         </div>
       )}
 
       {previewUrl ? (
-        <div className="space-y-4">
-          <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden">
-            <Image
-              src={previewUrl}
-              alt="商品画像"
-              fill
-              className="object-contain"
-            />
-          </div>
-          <div className="flex gap-2">
-            <label className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
-              画像を変更
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                disabled={uploading}
-                className="hidden"
-              />
-            </label>
-            <button
-              type="button"
-              onClick={handleRemove}
-              disabled={uploading}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+        <div className="relative inline-block">
+          <img
+            src={previewUrl}
+            alt="商品画像"
+            className="w-64 h-64 object-cover rounded-lg border-2 border-gray-300"
+          />
+          <button
+            type="button"
+            onClick={handleRemove}
+            disabled={uploading}
+            className="absolute top-2 right-2 bg-red-600 text-white p-2 rounded-full hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              画像を削除
-            </button>
-          </div>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
       ) : (
-        <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors">
-          {uploading ? (
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">アップロード中...</p>
-            </div>
-          ) : (
-            <div className="text-center">
-              <svg
-                className="w-12 h-12 text-gray-400 mx-auto mb-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              <p className="text-gray-600 mb-2">
-                クリックして画像を選択
-              </p>
-              <p className="text-sm text-gray-500">
-                PNG, JPG, GIF（最大5MB）
-              </p>
-            </div>
-          )}
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+          <label
+            htmlFor="image-upload"
+            className="cursor-pointer flex flex-col items-center"
+          >
+            <svg
+              className="w-12 h-12 text-gray-400 mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            <span className="text-sm text-gray-600 mb-2">
+              クリックして画像を選択
+            </span>
+            <span className="text-xs text-gray-500">
+              PNG, JPG, GIF (最大5MB)
+            </span>
+          </label>
           <input
+            id="image-upload"
             type="file"
             accept="image/*"
             onChange={handleFileChange}
             disabled={uploading}
             className="hidden"
           />
-        </label>
+        </div>
+      )}
+
+      {uploading && (
+        <div className="mt-4 flex items-center text-sm text-gray-600">
+          <svg
+            className="animate-spin h-5 w-5 mr-2 text-blue-600"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          アップロード中...
+        </div>
       )}
     </div>
   )
 }
-

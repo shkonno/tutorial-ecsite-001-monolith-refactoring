@@ -602,10 +602,9 @@ GitHub Actions ワークフロー:
 - [QUICKSTART.md](./QUICKSTART.md) - クイックスタートガイド
 - [SETUP-CHECKLIST.md](./SETUP-CHECKLIST.md) - セットアップチェックリスト
 - [PLAYWRIGHT-MCP-QUICKSTART.md](../PLAYWRIGHT-MCP-QUICKSTART.md) - Playwright MCP クイックスタート
-- [issues-and-todos.md](./issues-and-todos.md) - 開発タスク一覧
+- [issues-and-todos.md](../product/issues-and-todos.md) - 開発タスク一覧
 
 ---
 
 **最終更新**: 2025-10-30  
 **メンテナ**: プロジェクトチーム
-
