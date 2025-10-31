@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -41,7 +41,7 @@ export default function OrderDetailPage() {
   const [loading, setLoading] = useState(true)
   const [cancelling, setCancelling] = useState(false)
 
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     try {
       setLoading(true)
       const { getOrderById } = await import('@/lib/actions/order')
@@ -58,7 +58,7 @@ export default function OrderDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [orderId, router])
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -69,7 +69,7 @@ export default function OrderDetailPage() {
     if (status === 'authenticated') {
       fetchOrder()
     }
-  }, [status, router, orderId, fetchOrder])
+  }, [status, router, fetchOrder])
 
   const handleCancel = async () => {
     if (!confirm('この注文をキャンセルしますか？\n在庫は自動的に復元されます。')) return
