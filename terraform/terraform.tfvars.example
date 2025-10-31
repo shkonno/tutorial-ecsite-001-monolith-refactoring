@@ -1,0 +1,46 @@
+# Example Terraform Variables File
+# Copy this file to terraform.tfvars and update with your values
+
+# General Settings
+project_name = "ecommerce"
+environment  = "production"
+aws_region   = "ap-northeast-1"
+
+# VPC Settings
+vpc_cidr           = "10.0.0.0/16"
+availability_zones = ["ap-northeast-1a", "ap-northeast-1c"]
+
+# ECS Settings
+ecs_task_cpu       = "512"
+ecs_task_memory    = "1024"
+ecs_desired_count  = 2
+container_port     = 3000
+
+# RDS Settings
+db_instance_class    = "db.t3.micro"
+db_name              = "ecommerce"
+db_username          = "postgres"
+db_password          = "CHANGE_THIS_PASSWORD" # Change this!
+db_allocated_storage = 20
+
+# ElastiCache Settings
+elasticache_node_type        = "cache.t3.micro"
+elasticache_num_cache_nodes  = 1
+
+# S3 Settings
+s3_bucket_name = "images"
+
+# Domain Settings (Optional)
+# domain_name     = "example.com"
+# certificate_arn = "arn:aws:acm:ap-northeast-1:123456789012:certificate/xxxxx"
+
+# Monitoring Settings
+enable_container_insights = true
+log_retention_days        = 7
+
+# Auto Scaling Settings
+ecs_autoscaling_min_capacity = 1
+ecs_autoscaling_max_capacity = 4
+cpu_target_value             = 70
+memory_target_value          = 80
+

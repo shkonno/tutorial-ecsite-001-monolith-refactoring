@@ -1,0 +1,53 @@
+# Dependencies
+app/node_modules
+app/.pnp
+app/.pnp.js
+
+# Testing
+app/coverage
+
+# Next.js
+app/.next/
+app/out/
+
+# Production
+app/build
+
+# Misc
+app/.DS_Store
+app/*.pem
+
+# Debug
+app/npm-debug.log*
+app/yarn-debug.log*
+app/yarn-error.log*
+
+# Local env files
+app/.env*.local
+app/.env
+
+# Vercel
+app/.vercel
+
+# TypeScript
+app/*.tsbuildinfo
+app/next-env.d.ts
+
+# Git
+.git
+.gitignore
+
+# Documentation
+docs/
+planning/
+*.md
+*.drawio
+
+# Terraform
+terraform/
+
+# Docker
+docker/
+docker-compose.yml
+Dockerfile
+

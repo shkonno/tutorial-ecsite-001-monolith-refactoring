@@ -1,0 +1,38 @@
+stages:
+  - test
+  - build
+
+# Note: Dockerイメージのビルド・プッシュはローカルで実行します
+# GitLab CI/CDではソースコードのテストとビルド検証のみを実行
+
+# Lint Job - コード品質チェック
+lint:
+  stage: test
+  image: node:20-alpine
+  before_script:
+    - cd app
+    - npm ci
+  script:
+    - npm run lint
+    - echo "✅ Lint passed!"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+# Build Job - ビルド検証
+build:
+  stage: build
+  image: node:20-alpine
+  before_script:
+    - cd app
+    - npm ci
+  script:
+    - npm run build
+    - echo "✅ Build successful!"
+  artifacts:
+    paths:
+      - app/.next/
+    expire_in: 1 hour
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"

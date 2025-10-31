@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  # ステップ1: 最小限のHello Worldコンテナ
+  hello-world:
+    build:
+      context: .
+      dockerfile: Dockerfile.minimal
+    ports:
+      - "3000:3000"
+    container_name: hello-world-app
+

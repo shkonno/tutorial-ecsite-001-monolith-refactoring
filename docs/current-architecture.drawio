@@ -1,0 +1,106 @@
+<mxfile host="65bd71144e">
+    <diagram name="Current Architecture" id="current-arch">
+        <mxGraphModel dx="697" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Pattern 1: モノリス + コンテナアーキテクチャ&#10;(現状実装版)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="20" width="490" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="internet" value="Internet" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="80" width="210" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="route53" value="Route 53&#10;(DNS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontStyle=1;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="200" width="130" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="cloudfront" value="CloudFront (CDN)&#10;(Optional)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontStyle=1;dashed=1;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="280" width="130" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="alb" value="Application Load Balancer&#10;(Port 80/443)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="490" y="360" width="190" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="vpc-box" value="VPC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;dashed=1;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="120" y="440" width="930" height="280" as="geometry"/>
+                </mxCell>
+                <mxCell id="ecs-cluster" value="ECS Fargate Cluster" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="470" width="340" height="230" as="geometry"/>
+                </mxCell>
+                <mxCell id="ecs-task" value="Fargate Task&#10;(CPU: 0.5 vCPU, Mem: 1GB)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="160" y="510" width="300" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="nextjs-container" value="Next.js 16 App Container&#10;(TypeScript + React 19)&#10;&#10;• App Router&#10;• API Routes / Server Actions&#10;• Prisma ORM&#10;• NextAuth.js (認証)&#10;• Tailwind CSS 4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="180" y="570" width="260" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="redis" value="ElastiCache Redis&#10;(cache.t3.micro)&#10;&#10;• セッション管理&#10;• キャッシュ&#10;(ioredis)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="470" width="160" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="rds" value="RDS PostgreSQL 15&#10;(db.t3.micro)&#10;Single AZ&#10;&#10;• Users&#10;• Products&#10;• Cart Items&#10;• Orders&#10;• Order Items" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="600" width="160" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="s3" value="S3 Bucket&#10;&#10;• 商品画像&#10;• 静的アセット&#10;(@aws-sdk/client-s3)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="710" y="470" width="160" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cloudwatch" value="CloudWatch&#10;&#10;• Logs&#10;• Metrics&#10;• Alarms" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="710" y="600" width="160" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="ecr" value="Amazon ECR&#10;&#10;• Docker Image&#10;  Repository" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="470" width="130" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="secrets" value="Secrets Manager&#10;&#10;• DB Credentials&#10;• API Keys" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="580" width="130" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="dev-env-box" value="ローカル開発環境 (Docker Compose + LocalStack)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;dashed=1;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="120" y="740" width="930" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="localstack" value="LocalStack (S3, Secrets Manager, CloudWatch)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="765" width="240" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="local-pg" value="PostgreSQL 15" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="765" width="120" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="local-redis" value="Redis 7" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="540" y="765" width="100" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="local-app" value="Next.js Dev Server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="765" width="130" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontColor=#000000;" parent="1" source="internet" target="route53" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontColor=#000000;" parent="1" source="route53" target="cloudfront" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontColor=#000000;" parent="1" source="cloudfront" target="alb" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontColor=#000000;" parent="1" source="alb" target="ecs-task" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;fontColor=#000000;" parent="1" source="nextjs-container" target="redis" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;fontColor=#000000;" parent="1" source="nextjs-container" target="rds" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;fontColor=#000000;" parent="1" source="nextjs-container" target="s3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;fontColor=#000000;" parent="1" source="ecs-task" target="ecr" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="arrow9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;fontColor=#000000;" parent="1" source="rds" target="secrets" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="label-redis" value="キャッシュ&#10;セッション" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="510" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="label-db" value="Prisma ORM" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="640" width="60" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="label-s3" value="AWS SDK v3" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="510" width="60" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
