@@ -1,6 +1,7 @@
 import { searchProductsForAdmin } from '@/lib/actions/product'
 import Link from 'next/link'
 import ProductSearch from '@/components/admin/ProductSearch'
+import React from 'react'
 
 export default async function AdminProductsPage({
   searchParams,
@@ -150,12 +151,18 @@ export default async function AdminProductsPage({
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Link
-                        href={`/admin/products/${product.id}/edit`}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
-                      >
-                        編集
-                      </Link>
+                      <div className="flex items-center justify-end gap-2">
+                        <Link
+                          href={`/admin/products/${product.id}/edit`}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          編集
+                        </Link>
+                        <ProductDeleteButton
+                          productId={product.id}
+                          productName={product.name}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -199,5 +206,78 @@ export default async function AdminProductsPage({
         )}
       </div>
     </div>
+  )
+}
+
+// 削除ボタンコンポーネント（クライアントコンポーネント）
+'use client'
+function ProductDeleteButton({ productId, productName }: { productId: string, productName: string }) {
+  const React = require('react') as typeof import('react')
+  const { useRouter } = require('next/navigation') as typeof import('next/navigation')
+  
+  const [showConfirm, setShowConfirm] = React.useState(false)
+  const [loading, setLoading] = React.useState(false)
+  const router = useRouter()
+
+  const handleDelete = async () => {
+    setLoading(true)
+    
+    try {
+      const { deleteProduct } = await import('@/lib/actions/product')
+      const result = await deleteProduct(productId)
+      
+      if (result.success) {
+        router.refresh()
+      } else {
+        alert(result.error || '削除に失敗しました')
+      }
+    } catch (error) {
+      console.error('削除エラー:', error)
+      alert('削除に失敗しました')
+    } finally {
+      setLoading(false)
+      setShowConfirm(false)
+    }
+  }
+
+  return (
+    <>
+      <button
+        onClick={() => setShowConfirm(true)}
+        className="text-red-600 hover:text-red-900"
+        disabled={loading}
+      >
+        削除
+      </button>
+
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              商品を削除しますか?
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              <span className="font-medium">{productName}</span> を削除すると、関連する注文履歴では非公開として扱われます。
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleDelete}
+                disabled={loading}
+                className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
+              >
+                {loading ? '削除中...' : '削除する'}
+              </button>
+              <button
+                onClick={() => setShowConfirm(false)}
+                disabled={loading}
+                className="flex-1 border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+              >
+                キャンセル
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }

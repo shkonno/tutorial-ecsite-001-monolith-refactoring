@@ -3,54 +3,77 @@ import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import { httpRequestCounter, httpRequestDuration, httpRequestsInProgress } from '@/lib/metrics-edge'
 
-export default async function middleware(req: NextRequest) {
+export async function middleware(request: NextRequest) {
   const startTime = Date.now()
-  const method = req.method
-  const path = req.nextUrl.pathname
+  const method = request.method
+  const { pathname, search } = request.nextUrl
 
   // メトリクスAPIはスキップ
-  if (path === '/api/metrics') {
+  if (pathname === '/api/metrics') {
     return NextResponse.next()
   }
 
   // 進行中リクエスト数を増加
-  httpRequestsInProgress.inc({ method, route: path })
+  httpRequestsInProgress.inc({ method, route: pathname })
 
   try {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
     
-    // 認証が必要なパス
-    const protectedPaths = ['/cart', '/checkout', '/orders', '/admin']
+    // 管理者ページへのアクセス制御（最優先）
+    if (pathname.startsWith('/admin')) {
+      // 未認証の場合はログインページにリダイレクト
+      if (!token) {
+        const loginUrl = new URL('/login', request.url)
+        loginUrl.searchParams.set('callbackUrl', `${pathname}${search}`)
+
+        const redirectResponse = NextResponse.redirect(loginUrl, { status: 302 })
+
+        // メトリクスを記録
+        recordMetrics(method, pathname, redirectResponse.status, startTime)
+
+        return redirectResponse
+      }
+
+      // 一般ユーザーの場合はホームにリダイレクト
+      if (token.role !== 'ADMIN') {
+        const homeUrl = new URL('/', request.url)
+        const redirectResponse = NextResponse.redirect(homeUrl, { status: 302 })
+
+        // メトリクスを記録
+        recordMetrics(method, pathname, redirectResponse.status, startTime)
+
+        return redirectResponse
+      }
+    }
+    
+    // その他の認証が必要なパス
+    const protectedPaths = ['/cart', '/checkout', '/orders']
     
     // 認証が必要なパスかチェック
-    const isProtectedPath = protectedPaths.some(p => path.startsWith(p))
+    const isProtectedPath = protectedPaths.some(p => pathname.startsWith(p))
     
     if (isProtectedPath && !token) {
       // 未認証の場合はログインページにリダイレクト
-      const loginUrl = new URL('/login', req.url)
-      loginUrl.searchParams.set('callbackUrl', path)
-      
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('callbackUrl', `${pathname}${search}`)
+
+      const redirectResponse = NextResponse.redirect(loginUrl, { status: 302 })
+
       // メトリクスを記録
-      recordMetrics(method, path, 302, startTime)
-      
-      return NextResponse.redirect(loginUrl)
+      recordMetrics(method, pathname, redirectResponse.status, startTime)
+
+      return redirectResponse
     }
 
-    // 管理者ページへのアクセス制御
-    if (path.startsWith('/admin') && token?.role !== 'ADMIN') {
-      // メトリクスを記録
-      recordMetrics(method, path, 302, startTime)
-      
-      return NextResponse.redirect(new URL('/', req.url))
-    }
+    const response = NextResponse.next()
 
     // メトリクスを記録
-    recordMetrics(method, path, 200, startTime)
+    recordMetrics(method, pathname, response.status, startTime)
 
-    return NextResponse.next()
+    return response
   } finally {
     // 進行中リクエスト数を減少
-    httpRequestsInProgress.dec({ method, route: path })
+    httpRequestsInProgress.dec({ method, route: pathname })
   }
 }
 

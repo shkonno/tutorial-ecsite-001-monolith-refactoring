@@ -2,6 +2,8 @@
 
 import { useFormState, useFormStatus } from 'react-dom'
 import Link from 'next/link'
+import { useState } from 'react'
+import ImageUpload from '@/components/admin/ImageUpload'
 
 type Product = {
   id: string
@@ -20,8 +22,12 @@ type ProductFormProps = {
 }
 
 export function ProductForm({ action, product }: ProductFormProps) {
+  const [imageUrl, setImageUrl] = useState(product?.imageUrl || '')
+  
   const [state, formAction] = useFormState(
     async (_prevState: any, formData: FormData) => {
+      // 画像URLをFormDataに追加
+      formData.set('imageUrl', imageUrl)
       return await action(formData)
     },
     { error: '' }
@@ -113,22 +119,13 @@ export function ProductForm({ action, product }: ProductFormProps) {
         />
       </div>
 
-      {/* 画像URL */}
+      {/* 画像アップロード */}
       <div>
-        <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-1">
-          画像URL
-        </label>
-        <input
-          type="url"
-          id="imageUrl"
-          name="imageUrl"
-          defaultValue={product?.imageUrl || ''}
-          placeholder="https://example.com/image.jpg"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        <ImageUpload
+          currentImageUrl={imageUrl}
+          onImageUploaded={(url) => setImageUrl(url)}
         />
-        <p className="text-sm text-gray-500 mt-1">
-          画像のURLを入力してください（S3などの外部ストレージ）
-        </p>
+        <input type="hidden" name="imageUrl" value={imageUrl} />
       </div>
 
       {/* 公開ステータス */}
