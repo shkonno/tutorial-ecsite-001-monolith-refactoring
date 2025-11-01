@@ -1,0 +1,72 @@
+#UI Screen Flows
+```mermaid
+
+%% Mermaid flowcharts for UI screen navigation
+
+flowchart LR
+  subgraph Public["パブリック"]
+    Home["ホーム\n`/`"] --> Products["商品一覧\n`/products`"]
+    Home --> Register["新規登録\n`/register`"]
+    Home -->|ヘッダー| About["サポート(未実装)\n`/about`"]
+    Register -->|2秒後| Login["ログイン\n`/login`"]
+    Login -->|成功| Home
+    Login -->|リンク| Register
+    Products -->|カードリンク| ProductDetail["商品詳細(未実装)\n`/products/{id}`"]
+    Products -->|ヘッダーカート| Cart["カート\n`/cart`"]
+    Products -->|ヘッダー/CTA| Login
+  end
+
+  subgraph Auth["認証必須"]
+    Cart -->|レジに進む| Checkout["チェックアウト\n`/checkout`"]
+    Cart -->|買い物を続ける| Products
+    Checkout -->|注文確定| OrderDetail["注文詳細\n`/orders/{id}`"]
+    Checkout -->|戻る| Cart
+    Orders["注文履歴\n`/orders`"] -->|カード| OrderDetail
+    Orders -->|商品を見る| Products
+    OrderDetail -->|戻る| Orders
+    OrderDetail -->|商品リンク| ProductDetail
+  end
+
+  Cart -.未ログインはリダイレクト.-> Login
+  Checkout -.未ログインはリダイレクト.-> Login
+  Orders -.未ログインはリダイレクト.-> Login
+
+  NotFound["404画面\n`not-found`"] --> Home
+  NotFound --> Products
+  NotFound --> Cart
+  NotFound --> Orders
+  NotFound --> Contact["お問い合わせ(未実装)\n`/contact`"]
+
+  ErrorPage["エラーページ\n`error.tsx`"] -->|再試行| Home
+  ErrorPage --> Contact
+
+  class ProductDetail,About,Contact todo;
+  classDef todo stroke-dasharray:4 2,fill:#fff8f0,color:#b45309;
+
+---
+
+flowchart LR
+  AdminEntry["`/admin*` アクセス"] -->|未ログイン| Login["ログイン\n`/login`"]
+  AdminEntry -->|ROLE ≠ ADMIN| Home["ホーム\n`/`"]
+  AdminEntry -->|ROLE = ADMIN| AdminDashboard["管理ダッシュボード\n`/admin`"]
+
+  AdminDashboard --> AdminProducts["商品管理\n`/admin/products`"]
+  AdminDashboard --> AdminOrders["注文管理\n`/admin/orders`"]
+  AdminDashboard --> AdminUsers["ユーザー管理\n`/admin/users`"]
+  AdminDashboard -->|最新注文カード| AdminOrderDetail["注文詳細\n`/admin/orders/{id}`"]
+  AdminDashboard -->|在庫カード| AdminProducts
+
+  AdminProducts -->|+ 新規商品| AdminProductNew["商品新規作成\n`/admin/products/new`"]
+  AdminProductNew -->|保存| AdminProducts
+  AdminProducts -->|行の編集| AdminProductEdit["商品編集\n`/admin/products/{id}/edit`"]
+  AdminProductEdit -->|保存| AdminProducts
+
+  AdminOrders -->|詳細リンク| AdminOrderDetail
+  AdminOrderDetail -->|戻る| AdminOrders
+
+  AdminUsers -->|ロール変更ボタン| AdminUsersQuery["`/admin/users?userId=...` (未実装)"]
+
+  class AdminUsersQuery todo;
+  classDef todo stroke-dasharray:4 2,fill:#fff8f0,color:#b45309;
+
+  ```

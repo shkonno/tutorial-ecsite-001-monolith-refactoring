@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Docker環境一括停止スクリプト
-# 使い方: ./scripts/stop.sh
+# 使い方: ./scripts/stop.sh [--clean]
+#   --clean, -c: ボリュームも削除（データが消えます）
 
 set -e
 
@@ -37,18 +38,37 @@ echo -e "${BLUE}停止するコンテナ:${NC}"
 docker-compose ps
 echo ""
 
+# オプション解析
+CLEAN_FLAG=""
+if [ "$1" = "--clean" ] || [ "$1" = "-c" ]; then
+    echo -e "${RED}⚠️  警告: ボリュームも削除します（データが消えます）${NC}"
+    read -p "本当に続行しますか？ (yes/no): " confirm
+    
+    if [ "$confirm" != "yes" ]; then
+        echo -e "${GREEN}キャンセルしました${NC}"
+        exit 0
+    fi
+    CLEAN_FLAG="-v"
+fi
+
 # コンテナを停止
 echo -e "${YELLOW}コンテナを停止中...${NC}"
-docker-compose down
+docker-compose down $CLEAN_FLAG
 
 echo ""
 echo -e "${BLUE}================================================${NC}"
 echo -e "${GREEN}✅ Docker環境の停止が完了しました！${NC}"
 echo -e "${BLUE}================================================${NC}"
 echo ""
+
+if [ -n "$CLEAN_FLAG" ]; then
+    echo -e "${RED}🗑️  ボリュームが削除されました（データは消去されています）${NC}"
+    echo ""
+fi
+
 echo -e "${BLUE}💡 次のコマンド:${NC}"
 echo "  - 再起動:           ./scripts/start.sh"
-echo "  - データも削除:     docker-compose down -v"
-echo "  - イメージも削除:   docker-compose down --rmi all"
+echo "  - データリセット:   ./scripts/reset.sh --seed"
+echo "  - データバックアップ: ./scripts/backup.sh"
 echo ""
 

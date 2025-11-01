@@ -17,8 +17,11 @@
 
 **使い方:**
 ```bash
-# プロジェクトルートから実行
+# プロジェクトルートから実行（推奨）
 ./scripts/start.sh
+
+# ビルドしてから起動（コード変更後）
+./scripts/start.sh --build
 
 # または、scriptsディレクトリから実行
 cd scripts
@@ -26,10 +29,13 @@ cd scripts
 ```
 
 **起動されるサービス:**
-- 🗄️ PostgreSQL (Port: 5432)
-- 🔴 Redis (Port: 6379)
-- ☁️ LocalStack (Port: 4566)
-- ⚛️ Next.js App (Port: 3000)
+- 🗄️ PostgreSQL (Port: 5432) - データベース
+- 🔴 Redis (Port: 6379) - キャッシュ
+- ☁️ LocalStack (Port: 4566) - AWS S3エミュレーター
+- ⚛️ Next.js App (Port: 3000) - Webアプリケーション
+- 📊 Node Exporter (Port: 9100) - システムメトリクス
+- 📊 Redis Exporter (Port: 9121) - Redisメトリクス
+- 📊 PostgreSQL Exporter (Port: 9187) - DBメトリクス
 
 ---
 
@@ -41,15 +47,85 @@ cd scripts
 - ✅ 起動中のコンテナ確認
 - ✅ 全サービスの停止・削除
 - ✅ ネットワークのクリーンアップ
+- ✅ データ保持（デフォルト）
+- ✅ データ削除オプション（--clean）
 
 **使い方:**
 ```bash
-# プロジェクトルートから実行
+# プロジェクトルートから実行（データは保持）
 ./scripts/stop.sh
+
+# データも削除して停止
+./scripts/stop.sh --clean
 
 # または、scriptsディレクトリから実行
 cd scripts
 ./stop.sh
+```
+
+---
+
+### `reset.sh` - データベースのリセット
+
+データベースとRedisを初期状態にリセットします。
+
+**機能:**
+- ✅ 全データの削除
+- ✅ コンテナの再起動
+- ✅ シードデータ投入（オプション）
+
+**使い方:**
+```bash
+# データをリセット（空の状態）
+./scripts/reset.sh
+
+# データをリセットしてシードデータを投入
+./scripts/reset.sh --seed
+```
+
+---
+
+### `backup.sh` - データバックアップ
+
+現在のデータベースとRedisの状態をバックアップします。
+
+**機能:**
+- ✅ PostgreSQLデータベースのダンプ
+- ✅ Redisデータのバックアップ
+- ✅ バックアップ情報の保存
+
+**使い方:**
+```bash
+# 自動的に日時付きでバックアップ
+./scripts/backup.sh
+
+# バックアップ名を指定
+./scripts/backup.sh my-backup-name
+```
+
+**バックアップ保存先:**
+- `backups/<backup-name>/database.sql` - PostgreSQLダンプ
+- `backups/<backup-name>/redis.rdb` - Redisデータ
+- `backups/<backup-name>/info.txt` - バックアップ情報
+
+---
+
+### `restore.sh` - データリストア
+
+バックアップからデータを復元します。
+
+**機能:**
+- ✅ PostgreSQLデータベースのリストア
+- ✅ Redisデータのリストア
+- ✅ アプリケーションの再起動
+
+**使い方:**
+```bash
+# 利用可能なバックアップを確認
+./scripts/restore.sh
+
+# 指定したバックアップをリストア
+./scripts/restore.sh backup-20250101-120000
 ```
 
 ---
@@ -68,15 +144,45 @@ chmod +x scripts/*.sh
 open http://localhost:3000
 ```
 
+### 通常の起動（2回目以降）
+```bash
+# 通常起動（既存イメージを使用、高速）
+./scripts/start.sh
+
+# コード変更後はビルドして起動
+./scripts/start.sh --build
+```
+
 ### 停止
 ```bash
+# データを保持したまま停止（推奨）
 ./scripts/stop.sh
+
+# データも削除して停止
+./scripts/stop.sh --clean
 ```
 
 ### 再起動
 ```bash
+# 完全な再起動（停止→起動）
 ./scripts/stop.sh
 ./scripts/start.sh
+
+# または個別サービスの再起動
+docker-compose restart app
+docker-compose restart db
+```
+
+### データ管理
+```bash
+# バックアップ作成
+./scripts/backup.sh
+
+# データリセット（初期状態＋シードデータ）
+./scripts/reset.sh --seed
+
+# バックアップからリストア
+./scripts/restore.sh backup-20250101-120000
 ```
 
 ---

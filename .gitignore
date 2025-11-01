@@ -47,3 +47,10 @@ terraform/terraform.tfvars
 .idea/
 *.swp
 *.swo
+
+# Playwright
+test-results/
+playwright-report/
+
+# Backups
+backups/

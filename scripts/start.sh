@@ -48,8 +48,15 @@ echo "  - LocalStack (Port: 4566)"
 echo "  - Next.js App (Port: 3000)"
 echo ""
 
+# オプション解析
+BUILD_FLAG=""
+if [ "$1" = "--build" ] || [ "$1" = "-b" ]; then
+    BUILD_FLAG="--build"
+    echo -e "${BLUE}ビルドオプションが指定されました。イメージを再ビルドします...${NC}"
+fi
+
 # バックグラウンドで起動
-docker-compose up -d --build
+docker-compose up -d $BUILD_FLAG
 
 echo -e "${GREEN}✅ コンテナ起動完了${NC}"
 echo ""
@@ -99,8 +106,9 @@ echo "  - LocalStack:  http://localhost:4566"
 echo ""
 echo -e "${BLUE}💡 便利なコマンド:${NC}"
 echo "  - ログ確認:     docker-compose logs -f"
-echo "  - 停止:         ./scripts/stop.sh または docker-compose down"
+echo "  - 停止:         ./scripts/stop.sh"
 echo "  - 再起動:       docker-compose restart"
+echo "  - ビルド起動:   ./scripts/start.sh --build"
 echo "  - DB接続:       docker exec -it ecommerce-db psql -U postgres -d ecommerce"
 echo "  - Redis接続:    docker exec -it ecommerce-redis redis-cli"
 echo ""
