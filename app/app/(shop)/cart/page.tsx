@@ -4,11 +4,15 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+<<<<<<< HEAD
 import {
   FiArrowRight,
   FiShoppingCart,
   FiTrash2,
 } from 'react-icons/fi';
+=======
+import { FiArrowRight, FiShoppingCart, FiTrash2 } from 'react-icons/fi';
+>>>>>>> origin/main
 import CartItem from '@/components/cart/CartItem';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { clearCart } from '@/lib/actions/cart';
@@ -125,7 +129,11 @@ export default function CartPage() {
         </div>
       </section>
 
+<<<<<<< HEAD
  904      <section className="-mt-12 rounded-t-[40px] bg-[#fbfbfd] pb-20 pt-12 shadow-[0_-24px_60px_rgba(12,12,17,0.18)]">
+=======
+      <section className="-mt-12 rounded-t-[40px] bg-[#fbfbfd] pb-20 pt-12 shadow-[0_-24px_60px_rgba(12,12,17,0.18)]">
+>>>>>>> origin/main
         <div className="mx-auto w-full max-w-6xl px-6">
           {isEmpty ? (
             <div className="rounded-[32px] border border-black/5 bg-white/90 p-12 text-center shadow-[0_30px_80px_rgba(12,12,17,0.12)]">

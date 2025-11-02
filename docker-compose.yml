@@ -1,0 +1,207 @@
+services:
+  # Next.js アプリケーション（開発モード）
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:password@db:5432/ecommerce
+      REDIS_URL: redis://redis:6379
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: dev-secret-change-in-production
+      AUTH_TRUST_HOST: "true"
+      # LocalStack設定
+      AWS_ENDPOINT_URL: http://localstack:4566
+      AWS_REGION: ap-northeast-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      S3_BUCKET: ecommerce-images
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service=app"
+
+  # PostgreSQL データベース
+  db:
+    image: postgres:15-alpine
+    container_name: ecommerce-db
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service=db"
+
+  # Redis キャッシュ
+  redis:
+    image: redis:7-alpine
+    container_name: ecommerce-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service=redis"
+
+  # LocalStack - AWS サービスエミュレーター
+  localstack:
+    container_name: ecommerce-localstack
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"            # LocalStack Gateway
+      - "4510-4559:4510-4559"  # 外部サービスポート範囲
+    environment:
+      - SERVICES=s3,secretsmanager,cloudwatch,logs
+      - DEBUG=1
+      - DEFAULT_REGION=ap-northeast-1
+      - DATA_DIR=/var/lib/localstack/data
+    volumes:
+      - "${TMPDIR:-/tmp}/localstack:/var/lib/localstack"
+      # 初期化スクリプトのマウントは一時的に無効化（Docker Desktopの権限設定が必要）
+      # - /Users/s-konno/Documents/archtecture/tutorial_ec_site_001_monolith/docker/localstack:/etc/localstack/init/ready.d:ro
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Prometheus - メトリクス収集
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ecommerce-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  # Grafana - メトリクス可視化
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ecommerce-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./monitoring/grafana:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - grafana_data:/var/lib/grafana
+    networks:
+      - ecommerce-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  # Node Exporter - システムメトリクス
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: ecommerce-node-exporter
+    ports:
+      - "9100:9100"
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - ecommerce-network
+    restart: unless-stopped
+
+  # PostgreSQL Exporter - DBメトリクス
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: ecommerce-postgres-exporter
+    ports:
+      - "9187:9187"
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:password@db:5432/ecommerce?sslmode=disable"
+    networks:
+      - ecommerce-network
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  # Redis Exporter - キャッシュメトリクス
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: ecommerce-redis-exporter
+    ports:
+      - "9121:9121"
+    environment:
+      REDIS_ADDR: "redis://redis:6379"
+    networks:
+      - ecommerce-network
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  ecommerce-network:
+    driver: bridge
+

@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ユーザーテーブル
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  name          String?
+  password      String     // bcryptでハッシュ化されたパスワード
+  role          UserRole   @default(USER)
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  // リレーション
+  cartItems     CartItem[]
+  orders        Order[]
+  
+  @@index([email])
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+// 商品テーブル
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  price       Int         // 価格（円）
+  stock       Int         @default(0) // 在庫数
+  imageUrl    String?     // S3画像URL
+  category    String?
+  isActive    Boolean     @default(true) // 公開/非公開
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // リレーション
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+  
+  @@index([category])
+  @@index([isActive])
+  @@index([createdAt])
+  @@map("products")
+}
+
+// カートアイテムテーブル
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // リレーション
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, productId]) // 同一ユーザーの同一商品は1行のみ
+  @@index([userId])
+  @@map("cart_items")
+}
+
+// 注文テーブル
+model Order {
+  id            String      @id @default(cuid())
+  userId        String
+  status        OrderStatus @default(PENDING)
+  totalAmount   Int         // 合計金額（円）
+  shippingName  String      // 配送先氏名
+  shippingEmail String      // 配送先メールアドレス
+  shippingAddress String    // 配送先住所
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  // リレーション
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItems    OrderItem[]
+  
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING      // 処理中
+  CONFIRMED    // 確定
+  SHIPPED      // 発送済み
+  DELIVERED    // 配達完了
+  CANCELLED    // キャンセル
+}
+
+// 注文明細テーブル
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Int      // 注文時の商品価格（円）
+  createdAt DateTime @default(now())
+  
+  // リレーション
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  
+  @@index([orderId])
+  @@map("order_items")
+}

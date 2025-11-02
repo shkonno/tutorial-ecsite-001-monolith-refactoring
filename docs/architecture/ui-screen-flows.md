@@ -12,6 +12,10 @@ ECモノリスアプリの主要画面遷移を整理し、公開フロー・会
 ## パブリック/ショップフロー
 
 ```mermaid
+<<<<<<< HEAD
+=======
+%%{init: {'theme':'dark', 'themeVariables': { 'fontSize':'16px'}}}%%
+>>>>>>> origin/main
 flowchart LR
   subgraph Public["パブリック"]
     Home["ホーム\n`/`"] --> Products["商品一覧\n`/products`"]
@@ -67,6 +71,10 @@ flowchart LR
 ## 管理者フロー
 
 ```mermaid
+<<<<<<< HEAD
+=======
+%%{init: {'theme':'dark', 'themeVariables': { 'fontSize':'16px'}}}%%
+>>>>>>> origin/main
 flowchart LR
   AdminEntry["`/admin*` アクセス"] -->|未ログイン| Login["ログイン\n`/login`"]
   AdminEntry -->|ROLE ≠ ADMIN| Home["ホーム\n`/`"]
@@ -122,4 +130,8 @@ flowchart LR
 
 ---
 
+<<<<<<< HEAD
 最終更新日: 2024-XX-XX（更新時に差し替えてください）
+=======
+最終更新日: 2024-11-01
+>>>>>>> origin/main

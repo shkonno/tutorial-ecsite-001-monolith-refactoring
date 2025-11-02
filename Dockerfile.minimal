@@ -1,0 +1,15 @@
+# ステップ1: 最小限のHello World Dockerfile
+FROM node:20-alpine
+
+WORKDIR /app
+
+# 最小限のpackage.jsonを作成
+RUN echo '{"name":"hello-world","version":"1.0.0","scripts":{"start":"npx -y serve -s . -l 3000"}}' > package.json
+
+# シンプルなHTMLファイルを作成
+RUN echo '<!DOCTYPE html><html><head><title>Hello World</title></head><body><h1>Hello World from Docker!</h1><p>This is a minimal Docker container.</p></body></html>' > index.html
+
+EXPOSE 3000
+
+CMD ["npx", "-y", "serve", "-s", ".", "-l", "3000"]
+

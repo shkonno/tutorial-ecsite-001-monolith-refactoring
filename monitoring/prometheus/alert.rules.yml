@@ -1,0 +1,113 @@
+groups:
+  - name: system_alerts
+    interval: 30s
+    rules:
+      # CPU使用率が80%を超えた場合
+      - alert: HighCPUUsage
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU使用率が高い (instance {{ $labels.instance }})"
+          description: "CPU使用率が {{ $value }}% です（閾値: 80%）"
+
+      # メモリ使用率が85%を超えた場合
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "メモリ使用率が高い (instance {{ $labels.instance }})"
+          description: "メモリ使用率が {{ $value }}% です（閾値: 85%）"
+
+      # ディスク使用率が80%を超えた場合
+      - alert: HighDiskUsage
+        expr: (1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "ディスク使用率が高い (instance {{ $labels.instance }})"
+          description: "ディスク使用率が {{ $value }}% です（閾値: 80%）"
+
+  - name: application_alerts
+    interval: 30s
+    rules:
+      # HTTPエラー率が5%を超えた場合
+      - alert: HighHTTPErrorRate
+        expr: (sum(rate(http_requests_total{status_code=~"5.."}[5m])) / sum(rate(http_requests_total[5m]))) * 100 > 5
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "HTTPエラー率が高い"
+          description: "HTTPエラー率が {{ $value }}% です（閾値: 5%）"
+
+      # レスポンスタイムP95が2秒を超えた場合
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "レスポンスタイムが遅い"
+          description: "P95レスポンスタイムが {{ $value }}秒 です（閾値: 2秒）"
+
+      # キャッシュヒット率が50%を下回った場合
+      - alert: LowCacheHitRate
+        expr: (rate(cache_hits_total[5m]) / (rate(cache_hits_total[5m]) + rate(cache_misses_total[5m]))) * 100 < 50
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "キャッシュヒット率が低い"
+          description: "キャッシュヒット率が {{ $value }}% です（閾値: 50%）"
+
+  - name: database_alerts
+    interval: 30s
+    rules:
+      # PostgreSQL接続数が上限の80%を超えた場合
+      - alert: HighDatabaseConnections
+        expr: pg_stat_database_numbackends > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "データベース接続数が多い"
+          description: "データベース接続数が {{ $value }} です"
+
+      # データベースがダウンした場合
+      - alert: DatabaseDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "データベースがダウン"
+          description: "PostgreSQLに接続できません"
+
+  - name: redis_alerts
+    interval: 30s
+    rules:
+      # Redisメモリ使用率が80%を超えた場合
+      - alert: HighRedisMemoryUsage
+        expr: (redis_memory_used_bytes / redis_memory_max_bytes) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redisメモリ使用率が高い"
+          description: "Redisメモリ使用率が {{ $value }}% です（閾値: 80%）"
+
+      # Redisがダウンした場合
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redisがダウン"
+          description: "Redisに接続できません"
+

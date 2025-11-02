@@ -1,0 +1,35 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# アラートルールの読み込み
+rule_files:
+  - 'alert.rules.yml'
+
+scrape_configs:
+  # Prometheus自身の監視
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter (後で追加)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # PostgreSQL Exporter (後で追加)
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  # Redis Exporter (後で追加)
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+
+  # Next.js Application (後で追加)
+  - job_name: 'nextjs-app'
+    static_configs:
+      - targets: ['app:3000']
+    metrics_path: '/api/metrics'
+
