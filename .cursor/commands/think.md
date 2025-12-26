@@ -1,0 +1,1 @@
+MCPのsequential-thinkingを使って考えて

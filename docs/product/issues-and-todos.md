@@ -1,5 +1,7 @@
 # Pattern 1: モノリス + コンテナアーキテクチャ - イシュー & Todo リスト
 
+> 背骨（ハッピーパス）起点のリファクタリングは、まず `docs/product/refactoring-backbone-happy-path-issues.md` を参照してください。
+
 ## 🎉 最終更新: 2025年10月30日（機能実装完了版）
 
 **現在のステータス:**
