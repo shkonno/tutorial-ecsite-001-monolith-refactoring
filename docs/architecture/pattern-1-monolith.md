@@ -664,47 +664,12 @@ terraform apply
 ```
 
 ### 3. CI/CD (GitHub Actions)
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy to ECS
 
-on:
-  push:
-    branches: [main]
+現在は **AWS未運用** のため、ECS/ECR への自動デプロイ workflow は削除しています。
+代わりに以下を使用します。
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-1
-      
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-      
-      - name: Build, tag, and push image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ecommerce-monolith
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      
-      - name: Deploy to ECS
-        run: |
-          aws ecs update-service \
-            --cluster ecommerce-cluster \
-            --service ecommerce-service \
-            --force-new-deployment
-```
+- `/.github/workflows/ci.yml`: PR/main/develop で品質チェック（lint/typecheck/vitest）とDocker build検証
+- `/.github/workflows/e2e.yml`: E2E（手動実行）
 
 ## ✅ メリット
 

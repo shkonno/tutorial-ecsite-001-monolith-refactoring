@@ -93,9 +93,9 @@ tutorial_ec_site_001_monolith/
 │
 ├── .github/                   # GitHub Actions CI/CD
 │   └── workflows/
-│       ├── deploy.yml        # 本番デプロイ
-│       ├── test.yml          # テスト実行
-│       └── lint.yml          # コード品質チェック
+│       ├── ci.yml            # Lint / Typecheck / Vitest / Docker build（検証）
+│       ├── e2e.yml           # E2E（手動実行）
+│       └── (削除) deploy.yml # 旧: AWS(ECS)デプロイ（AWS未運用のため削除）
 │
 ├── Dockerfile                 # 本番環境用 Dockerfile
 ├── docker-compose.yml         # ローカル開発環境

@@ -176,7 +176,8 @@ ecommerce-monolith/
 ├── terraform/                     # インフラコード
 └── .github/
     └── workflows/
-        └── deploy.yml
+        ├── ci.yml            # Lint / Typecheck / Vitest / Docker build（検証）
+        └── e2e.yml           # E2E（手動実行）
 ```
 
 **Spec Kit設定**: ✅ 必要
@@ -258,22 +259,11 @@ design_patterns:
 ```
 
 **CI/CD**:
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy Monolith
+現在は「AWS未運用」のため、ECS/ECR への自動デプロイ workflow は削除しています。
+代わりに以下を使用します。
 
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Build and Push to ECR
-      - name: Deploy to ECS
-```
+- `/.github/workflows/ci.yml`: PR/main/develop で品質チェック（lint/typecheck/vitest）とDocker build検証
+- `/.github/workflows/e2e.yml`: E2E（手動実行）
 
 ---
 

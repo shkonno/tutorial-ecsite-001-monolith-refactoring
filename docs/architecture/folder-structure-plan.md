@@ -99,16 +99,15 @@ GitHub Actions ワークフロー定義。
 ```
 .github/
 └── workflows/
-    ├── deploy.yml       # 本番デプロイ
-    ├── test.yml         # テスト実行
-    └── lint.yml         # コード品質チェック
+    ├── ci.yml           # Lint / Typecheck / Vitest / Docker build（検証）
+    ├── e2e.yml          # E2E（手動実行）
+    └── (削除) deploy.yml # 旧: AWS(ECS)デプロイ（AWS未運用のため削除）
 ```
 
 **主要な責務:**
 
 - 自動テスト実行
-- Docker イメージビルド・ECR プッシュ
-- ECS サービス更新
+- Docker イメージビルド（検証）
 
 ### 5. docs/ - ドキュメント
 

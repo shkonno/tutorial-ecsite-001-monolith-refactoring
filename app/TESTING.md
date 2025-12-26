@@ -261,7 +261,8 @@ npm run test:report
 
 ### GitHub Actions
 
-`.github/workflows/test.yml` に以下を追加：
+CI（lint/typecheck/vitest）は `.github/workflows/ci.yml` で実行します。
+E2Eは現状フレーク要因が残り得るため、手動実行の `.github/workflows/e2e.yml` に分離しています。
 
 ```yaml
 name: Tests
