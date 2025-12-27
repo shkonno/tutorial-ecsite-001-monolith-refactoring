@@ -1,3 +1,21 @@
- - トークの内容を構造的に整理して"01_Input/99_history"以下に保存する
+ - トークの内容を構造的に整理して"docs/work-record"以下に保存する
   - ファイル名は時間を含めたタイムスタンプ（ISO8601）でお願いします。
+  - コマンド発行後は生成レコードを見せて「修正しますか？」を一言リマインドする
+  - レコード前後に対応するIssueチェックリスト（`docs/refacroting/ISSUES-UC0-UC2.md` 等）を開き、完了/残を同期する
+  - 所要時間計測（ライト運用）
+    - チャット開始時に `scripts/log-session.sh start`（無理なら手動で開始時刻メモ）
+    - /record 実行直前に `scripts/log-session.sh stop` → `tmp/last_session_minutes` を所要時間に貼る
+    - Active/Research/Wait/Interrupt は必要に応じて手動配分。計れなければ「未計測」と明記。
+  - 記載テンプレ（最小）:
+    - UC/Issue と TDDフェーズ（Red/Green/Refactor）
+    - 目的/違和感/仮説（5歳児説明レベル）
+    - 決定と根拠、残った疑問
+    - 次の一歩（10分タスク）と安全網（テスト/ログ）
+    - 時間記録（カテゴリ: Active/Wait/Research/Interrupt）
+  - ポモ終了2分チェック（試して重ければ削る）:
+    - 目的一文リマインド
+    - できた/詰まり/気づき
+    - 次の一歩（10分タスクを1つだけ、ISSUES-UC0-UC2に紐づけ）
+    - 安全網確認（テスト/ログ/Evidence）
+    - 時間カテゴリ入力（Active/Wait/Research/Interrupt）
   
