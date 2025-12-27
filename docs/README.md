@@ -4,6 +4,7 @@
 
 - **背骨（ハッピーパス）リファクタの入口**: `product/refactoring-backbone-happy-path-issues.md`
 - **ドキュメント管理（参照ログ/削除）**: `operations/document-management.md`
+  - **運用ルール**: 不要ファイルは「候補化→参照ログ→ユースケース単位でまとめて削除」
 
 - `getting-started/`: 開発を始めるための手順やチェックリスト
 - `operations/`: デプロイやテスト、トラブルシューティングの実務ガイド
